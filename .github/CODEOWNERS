@@ -1,0 +1,6 @@
+# Every change requires review from the code owner. Security-sensitive paths are listed explicitly.
+*                                   @jelome265
+/.github/                           @jelome265
+/skills/rust-enterprise-frameworks/ @jelome265
+/skills/rust-enterprise-harden/     @jelome265
+/skills/rust-enterprise-best-practices/scripts/ @jelome265
