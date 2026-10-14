@@ -1,0 +1,33 @@
+{
+  "name": "rustacean-skills",
+  "version": "0.1.0",
+  "description": "Install the Rustacean enterprise Rust skill suite into a coding agent's skill directory. Dry run by default, hash-verified.",
+  "license": "Apache-2.0",
+  "author": "jelome265",
+  "homepage": "https://github.com/jelome265/Rustacean#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jelome265/Rustacean.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jelome265/Rustacean/issues"
+  },
+  "keywords": ["rust", "agent-skills", "claude-code", "codex", "cursor", "security", "enterprise"],
+  "bin": {
+    "rustacean-skills": "bin/rustacean-skills.js"
+  },
+  "files": [
+    "bin/",
+    "tools/install_skills.py",
+    "tools/validate_skills.py",
+    "tools/agent_skill_targets.json",
+    "skills/",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test test/cli.test.js"
+  }
+}

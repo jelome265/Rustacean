@@ -60,6 +60,18 @@ Replace `codex` with your agent's ID from the [platform table](#install-on-each-
 
 Exit codes: `0` success or dry run, `1` refused or verification failed, `2` usage error.
 
+### Alternative: npx (no clone required)
+
+Requires **Node.js 18+** and **Python 3**. The package bundles the installer and the five skills:
+
+```bash
+npx rustacean-skills --list
+npx rustacean-skills --agent codex --project-root /path/to/your/project           # dry run
+npx rustacean-skills --agent codex --project-root /path/to/your/project --apply   # install and verify
+```
+
+Every option in the installer applies. The launcher only locates Python 3 and forwards arguments and the exit code. Set `RUSTACEAN_PYTHON=/path/to/python3` to choose an interpreter.
+
 ---
 
 ## Install on each platform
