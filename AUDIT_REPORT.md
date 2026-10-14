@@ -76,9 +76,9 @@ Baseline CI runs formatting, Clippy, workspace tests and rustdoc. The security w
 
 **Do not blindly wire the whole script into CI or add empty placeholder policy files.** First create a genuine conformance fixture/profile that satisfies those policy requirements, or clearly scope the reusable gate as a consumer-project bootstrap gate. In the meantime, this PR adds a real, pinned-version cargo-audit check for this repository's Cargo.lock. CI must run to show its actual result.
 
-### F-06 — Standard issue templates are absent
+### F-06 — Standard issue templates were absent at the audited baseline
 **Severity:** Minor  
-**Status:** Finding; not changed in this PR.
+**Status at baseline:** Accurate for the audited snapshot; resolved in the current tree. See the dated reassessment below.
 
 The root .github directory has CODEOWNERS, Dependabot, PR template and workflows but no ISSUE_TEMPLATE directory was found.
 
@@ -120,9 +120,9 @@ Rust async uses Future, async/await and an executor/runtime; JavaScript Promise 
 
 Rust async reference: https://rust-lang.github.io/async-book/part-guide/async-await.html
 
-### F-11 — Required checks are not enforced by the active ruleset
+### F-11 — Required checks and code-owner review were missing at the audited baseline
 **Severity:** High for merge governance  
-**Status:** Confirmed by read-only API inspection after this audit's first revision. Owner action required.
+**Status at baseline:** Confirmed by a read-only API inspection after this audit's first revision; superseded by the current-state reassessment below.
 
 Correction: the first revision of this report stated that branch protection returned HTTP 403 and could not be verified. A later read-only check with a repository-scoped token returned:
 
@@ -134,7 +134,7 @@ Correction: the first revision of this report stated that branch protection retu
 - `Main` requires `non_fast_forward` protection, so force pushes to the default branch are blocked.
 - Code scanning default setup is `not-configured`, so the advanced CodeQL workflow is the only scanner and there is no conflicting default setup.
 
-**Remediation (owner decision, not applied by this PR):** add the check names from CONTRIBUTING.md to the `Main` ruleset as required status checks, and set `require_code_owner_review` to `true`. Restrict or remove the admin bypass unless break-glass access is documented. Verify the change by opening a test pull request whose checks fail, and confirming that it cannot merge.
+**Remediation identified at baseline:** add the check names from CONTRIBUTING.md to the `Main` ruleset as required status checks and set `require_code_owner_review` to `true`. The dated reassessment below confirms those two controls are now enabled. Admin/bypass policy and the enforcement of a deliberately failing test PR remain separate owner-level verification items.
 
 ## Changes included in this PR
 
