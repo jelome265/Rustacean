@@ -30,7 +30,12 @@ requires one approving review, and requires code-owner review. Required-check st
 repository configuration, not a property of this Markdown file. The historical audit finding
 F-11 documents the earlier state and has a dated reassessment in `AUDIT_REPORT.md`.
 
-## Local checks
+## Core local checks
+
+The commands below cover core source, Rust, Python, and skill-registry validation. Hosted CI
+also runs workflow-security linting, shell lint, full-history secret scanning, Python and Rust
+dependency audits, PR-only dependency review, and CodeQL across Python, GitHub Actions, and Rust.
+Use the run linked from the PR to verify those hosted checks; a local subset is not a green CI claim.
 
 ```bash
 python3 -m pip install -r requirements-ci.txt
