@@ -7,7 +7,7 @@ description: Read-only enterprise audit of Rust code for security and logic defe
 
 An audit answers one question with evidence: **what can go wrong in this code, how would it go wrong, how bad is it, and how do we know?** An audit is not a style review and not a list of opinions. A finding without evidence is not a finding. This skill is read-only: it reads, runs analysis tools, runs tests, and writes a report. It does not edit source files, configuration, or CI, and it does not merge or approve pull requests.
 
-Read `rust-enterprise-best-practices/SKILL.md` for the rules being audited against. Read `rust-enterprise-harden/SKILL.md` for the controls the code is expected to have. An audit finding cites the rule or control it violates.
+Read `../rust-enterprise-best-practices/SKILL.md` for the rules being audited against. Read `../rust-enterprise-harden/SKILL.md` for the controls the code is expected to have. An audit finding cites the rule or control it violates.
 
 ## AUD-0. Operating rules
 
@@ -52,7 +52,7 @@ Run these and store the raw output as appendices. Missing tools are recorded as 
 | Miri (if `unsafe` present) | `cargo +<nightly> miri test --workspace --locked` | BP-US-04 |
 | Fuzz targets present | list `fuzz/fuzz_targets/` and `cargo fuzz list` | BP-TS-03, BLD-VERIFY-03 |
 | Coverage (if configured) | `cargo llvm-cov --workspace --locked --summary-only` | BP-TS-07 |
-| Gate scan | run `rust-enterprise-best-practices/scripts/rust-gate.sh` in report mode and keep its pattern-scan output | BP-* scan rows |
+| Gate scan | run `../rust-enterprise-best-practices/scripts/rust-gate.sh` in report mode and keep its pattern-scan output | BP-* scan rows |
 | Panic inventory | grep `unwrap(`, `expect(`, `panic!`, `unreachable!`, `todo!`, indexing `[` in non-test source | BP-ER-02, BP-CO-01 |
 | Unsafe inventory | grep `unsafe` in all source; list each block with its SAFETY comment | BP-US-02 |
 | Secret-shaped strings | scan history and working tree with a secrets detector (for example gitleaks or trufflehog, if installed) | SEC-SEC-05 |
