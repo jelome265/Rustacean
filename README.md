@@ -1,143 +1,220 @@
-<!-- Rustacean project banner -->
 <div align="center">
-  <h1>Rustacean</h1>
-  <p><strong>Enterprise engineering skills for Rust, backed by executable checks.</strong></p>
-  <p>Requirements-first implementation · Security and reliability hardening · Read-only audits · Framework controls</p>
-  <p>
-    <a href="https://github.com/jelome265/Rustacean/actions/workflows/ci.yml"><img alt="CI status" src="https://img.shields.io/github/actions/workflow/status/jelome265/Rustacean/ci.yml?branch=main&label=CI"></a>
-    <a href="https://github.com/jelome265/Rustacean/actions/workflows/codeql.yml"><img alt="CodeQL status" src="https://img.shields.io/github/actions/workflow/status/jelome265/Rustacean/codeql.yml?branch=main&label=CodeQL"></a>
-    <a href="https://github.com/jelome265/Rustacean/actions/workflows/security.yml"><img alt="Security workflow status" src="https://img.shields.io/github/actions/workflow/status/jelome265/Rustacean/security.yml?branch=main&label=Security"></a>
-    <a href="https://github.com/jelome265/Rustacean/actions/workflows/scorecard.yml"><img alt="OpenSSF Scorecard status" src="https://img.shields.io/github/actions/workflow/status/jelome265/Rustacean/scorecard.yml?branch=main&label=Scorecard"></a>
-    <a href="https://github.com/jelome265/Rustacean/blob/main/LICENSE"><img alt="License: Apache 2.0" src="https://img.shields.io/github/license/jelome265/Rustacean"></a>
-    <img alt="Rust toolchain 1.98.1" src="https://img.shields.io/badge/Rust-toolchain%201.98.1-orange">
-  </p>
+
+<img src=".github/assets/banner.svg" alt="Rustacean: enterprise engineering skills for Rust, backed by executable checks" width="100%">
+
+<br>
+
+[![CI](https://img.shields.io/github/actions/workflow/status/jelome265/Rustacean/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/jelome265/Rustacean/actions/workflows/ci.yml)
+[![CodeQL](https://img.shields.io/github/actions/workflow/status/jelome265/Rustacean/codeql.yml?branch=main&style=flat-square&label=CodeQL)](https://github.com/jelome265/Rustacean/actions/workflows/codeql.yml)
+[![Security](https://img.shields.io/github/actions/workflow/status/jelome265/Rustacean/security.yml?branch=main&style=flat-square&label=Security)](https://github.com/jelome265/Rustacean/actions/workflows/security.yml)
+[![OpenSSF Scorecard](https://img.shields.io/github/actions/workflow/status/jelome265/Rustacean/scorecard.yml?branch=main&style=flat-square&label=Scorecard)](https://github.com/jelome265/Rustacean/actions/workflows/scorecard.yml)
+[![License](https://img.shields.io/github/license/jelome265/Rustacean?style=flat-square)](LICENSE)
+
+![Rust toolchain](https://img.shields.io/badge/Rust-1.98.1-CE422B?style=flat-square&logo=rust&logoColor=white)
+![Edition](https://img.shields.io/badge/edition-2024-informational?style=flat-square)
+![Skills](https://img.shields.io/badge/skills-5-informational?style=flat-square)
+![Agents](https://img.shields.io/badge/supported%20agents-12-informational?style=flat-square)
+![Python](https://img.shields.io/badge/tools-Python%203-3776AB?style=flat-square&logo=python&logoColor=white)
+
+**[Quick install](#quick-install)** · **[Platforms](#install-on-each-platform)** · **[Verify](#verify-discovery)** · **[What's included](#whats-included)** · **[Local checks](#local-verification)** · **[Docs](#documentation)**
+
 </div>
 
 ---
 
-Rustacean is a cooperating suite of five coding-agent skills for building, hardening, and auditing production-oriented Rust systems. The suite combines written engineering requirements with validators and CI checks where automation is practical. It is designed to support engineering decisions, not replace developer review, tests, or runtime evidence.
+## Quick install
 
-**Start here:** [Quick installation](#quick-installation) · [Supported agents](#supported-agents) · [What is included](#what-is-included) · [Documentation](#documentation)
-
-## Quick installation
-
-The installer supports project-level or user-level installation. It validates the full five-skill suite, previews the plan by default, and verifies file hashes and cross-skill links after an installation.
-
-**Prerequisites:** Git and Python 3. Clone this repository first:
+Rustacean installs five cooperating agent skills into the discovery directory of your coding agent. Requirements: **Git** and **Python 3**.
 
 ```bash
 git clone https://github.com/jelome265/Rustacean.git
 cd Rustacean
+
+# 1. Dry run: prints the plan, writes nothing
+python3 tools/install_skills.py --agent codex --project-root /path/to/your/project
+
+# 2. Apply and verify
+python3 tools/install_skills.py --agent codex --project-root /path/to/your/project --apply
+```
+
+Replace `codex` with your agent's ID from the [platform table](#install-on-each-platform). Every run:
+
+- validates the source suite before touching anything,
+- computes the full plan before writing, so a partial suite is never left behind,
+- after writing, compares each installed skill to the source by content hash and checks that every peer link resolves.
+
+Exit codes: `0` success or dry run, `1` refused or verification failed, `2` usage error.
+
+---
+
+## Install on each platform
+
+List the supported agents and their documentation grade at any time:
+
+```bash
 python3 tools/install_skills.py --list
 ```
 
-Set <code>PROJECT</code> to the repository where you want your coding agent to use Rustacean. The following Codex example first previews changes without writing anything:
+### Platform table
+
+Project scope is the default. Use `--scope user` for every project on the machine.
+
+| Agent | `--agent` | Project location | User location | Path evidence |
+|---|---|---|---|---|
+| Claude Code | `claude-code` | `.claude/skills/` | `~/.claude/skills/` | Official |
+| OpenAI Codex CLI | `codex` | `.agents/skills/` | `~/.agents/skills/` | Official, sources disagree on user path |
+| OpenCode | `opencode` | `.agents/skills/` | `~/.agents/skills/` | Official |
+| Gemini CLI | `gemini-cli` | `.agents/skills/` | `~/.agents/skills/` | Official |
+| Zed Agent | `zed` | `.agents/skills/` | `~/.agents/skills/` | Official |
+| Google Antigravity | `antigravity` | `.agents/skills/` | `~/.gemini/config/skills/` | Official, CLI differs |
+| Cursor | `cursor` | `.agents/skills/` | `~/.agents/skills/` | Official |
+| GitHub Copilot (VS Code) | `copilot` | `.agents/skills/` | `~/.agents/skills/` | Official |
+| Z.AI ZCode | `zcode` | `.zcode/skills/` | `~/.zcode/skills/` | Official |
+| Freebuff (Codebuff) | `freebuff` | `.agents/skills/` | `~/.agents/skills/` | Third-party, not runtime-verified |
+| Meta Muse Code | `muse` | `.agents/skills/` | `~/.agents/skills/` | Third-party, not runtime-verified |
+| Kimi Code CLI | `kimi` | `.agents/skills/` | `~/.agents/skills/` | Conflicting, requires `--accept-conflicting` |
+
+Evidence grades describe the quality of the vendor documentation for the path. They are not a test that the agent loads the skills.
+
+### Commands
+
+Run each block from the Rustacean clone. Add `--apply` to write files after reviewing the dry run.
 
 ```bash
-PROJECT="/absolute/path/to/your/project"
+PROJECT=/absolute/path/to/your/project
 
-# Dry run: inspect the target and planned actions; writes nothing.
-python3 tools/install_skills.py --agent codex --project-root "$PROJECT"
+# Claude Code
+python3 tools/install_skills.py --agent claude-code --project-root "$PROJECT" --apply
 
-# Apply the same install plan, then verify the installed suite.
+# OpenAI Codex CLI
 python3 tools/install_skills.py --agent codex --project-root "$PROJECT" --apply
-```
 
-Replace <code>codex</code> with the target agent ID from the table below. Replace the example path with an existing project directory. The installer does not automatically detect agent installations or prove that a running agent has discovered the skills.
+# OpenCode
+python3 tools/install_skills.py --agent opencode --project-root "$PROJECT" --apply
 
-To install for your user account rather than one project, use <code>--scope user</code> and omit <code>--project-root</code>:
+# Gemini CLI
+python3 tools/install_skills.py --agent gemini-cli --project-root "$PROJECT" --apply
 
-```bash
-python3 tools/install_skills.py --agent codex --scope user --apply
-```
+# Zed Agent
+python3 tools/install_skills.py --agent zed --project-root "$PROJECT" --apply
 
-Use the user-level directory only if you intend these skills to be available across projects on that machine. Review project-level skill changes as you would review source code.
+# Google Antigravity (app / IDE)
+python3 tools/install_skills.py --agent antigravity --project-root "$PROJECT" --apply
 
-## Supported agents
-
-These are the agent targets currently recorded in <code>tools/agent_skill_targets.json</code>. The paths shown are the installer's **default project destination**; several agents also support alternative or user-level locations. Evidence grades describe the quality of the available path documentation, not a runtime test of skill discovery.
-
-| Agent / platform | Installer ID | Default project directory | Path evidence |
-|---|---|---|---|
-| Claude Code | <code>claude-code</code> | <code>.claude/skills/</code> | Official |
-| OpenAI Codex CLI | <code>codex</code> | <code>.agents/skills/</code> | Official; official sources disagree on some user-scope paths |
-| OpenCode | <code>opencode</code> | <code>.agents/skills/</code> | Official |
-| Gemini CLI | <code>gemini-cli</code> | <code>.agents/skills/</code> | Official |
-| Zed Agent | <code>zed</code> | <code>.agents/skills/</code> | Official |
-| Google Antigravity | <code>antigravity</code> | <code>.agents/skills/</code> | Official; CLI user path differs from app/IDE |
-| Cursor | <code>cursor</code> | <code>.agents/skills/</code> | Official |
-| GitHub Copilot in VS Code | <code>copilot</code> | <code>.agents/skills/</code> | Official |
-| Freebuff (Codebuff) | <code>freebuff</code> | <code>.agents/skills/</code> | Third-party / not runtime-verified |
-| Meta Muse Code | <code>muse</code> | <code>.agents/skills/</code> | Third-party / not runtime-verified |
-| Kimi Code CLI | <code>kimi</code> | <code>.agents/skills/</code> | Conflicting upstream path guidance |
-| Z.AI ZCode | <code>zcode</code> | <code>.zcode/skills/</code> | Official |
-
-### Install on a specific agent
-
-Use the same two-step workflow for each supported agent: run the dry run first, inspect its destination and planned actions, then add <code>--apply</code> to write the files. For example, to target Cursor:
-
-```bash
-python3 tools/install_skills.py --agent cursor --project-root "$PROJECT"
+# Cursor
 python3 tools/install_skills.py --agent cursor --project-root "$PROJECT" --apply
+
+# GitHub Copilot (VS Code agent)
+python3 tools/install_skills.py --agent copilot --project-root "$PROJECT" --apply
+
+# Z.AI ZCode
+python3 tools/install_skills.py --agent zcode --project-root "$PROJECT" --apply
+
+# Freebuff (Codebuff)
+python3 tools/install_skills.py --agent freebuff --project-root "$PROJECT" --apply
+
+# Meta Muse Code
+python3 tools/install_skills.py --agent muse --project-root "$PROJECT" --apply
+
+# Kimi Code CLI (verify the path for your installed version first)
+python3 tools/install_skills.py --agent kimi --project-root "$PROJECT" --accept-conflicting --apply
 ```
 
-Change <code>cursor</code> to any installer ID in the table to select another agent. The command installs all five skills together as siblings; do not copy a single skill out of the suite because its relative links depend on the others.
+User-wide install for any agent: replace `--project-root "$PROJECT"` with `--scope user`.
 
-**Platform-specific notes**
+### Agent-specific notes
 
-- **Kimi Code CLI:** official documentation for different generations describes different skill locations. The installer refuses this target unless you explicitly pass <code>--accept-conflicting</code> or supply a verified <code>--dest-dir</code>. Check the installed version's documentation before bypassing that guard.
-- **Google Antigravity:** the table shows the project path. For Antigravity CLI user scope, the documented destination is <code>~/.gemini/antigravity-cli/skills</code>; pass <code>--dest-dir ~/.gemini/antigravity-cli/skills</code> when selecting user scope.
-- **Codex CLI:** the current skills overview documents <code>.agents/skills</code> for repository discovery and <code>$HOME/.agents/skills</code> for user discovery, while an official skill-creator sample still recommends <code>$CODEX_HOME/skills</code> (normally <code>~/.codex/skills</code>). Verify discovery with your installed version.
-- **Muse and Freebuff:** path evidence is not fully confirmed against a running installation. Muse project skills may also require you to trust the workspace.
+- **Google Antigravity CLI, user scope:** the CLI reads a different directory from the app/IDE. Pass the explicit destination:
+  ```bash
+  python3 tools/install_skills.py --agent antigravity --scope user \
+    --dest-dir ~/.gemini/antigravity-cli/skills --apply
+  ```
+- **Codex CLI, user scope:** the current skills overview documents `$HOME/.agents/skills`, while an official sample still uses `$CODEX_HOME/skills`. The installer follows the overview. Confirm discovery in your version.
+- **Kimi Code CLI:** official documentation differs across releases. The installer refuses this target without `--accept-conflicting`. Check your version's docs, or pass a verified `--dest-dir`.
+- **Muse Code:** project skills are skipped in an untrusted workspace. Trust the workspace deliberately.
+- **Zed:** skills apply to the Zed Agent only. Project skills load only from trusted worktrees, and the folder name must match `name` in `SKILL.md`.
 
-See the [agent discovery research](docs/agent-skill-install-matrix.md) for source links, alternative destinations, unresolved conflicts, and verification gaps.
-
-### Installer safety and behavior
-
-- **Dry run by default:** no files are written unless <code>--apply</code> is supplied.
-- **All five skills together:** the installer rejects a missing or incomplete source suite.
-- **Plan before writing:** a differing existing install stops the operation unless <code>--force</code> is supplied.
-- **Post-install verification:** it compares installed content hashes and checks peer-skill links.
-- **Explicit destination available:** <code>--dest-dir PATH</code> overrides the registered destination.
-- **Symlink mode available:** <code>--mode symlink</code> points to this checkout rather than copying it.
-
-Inspect all supported names and current installer options with:
+### Any other agent, or a custom location
 
 ```bash
-python3 tools/install_skills.py --help
-python3 tools/install_skills.py --list
+python3 tools/install_skills.py --dest-dir /path/to/that/agent/skills --apply
 ```
 
-An install that succeeds means the files were installed and validated. It does **not** prove that a specific agent version discovered them or follows their rules. Follow the target agent's own skill-listing or reload procedure to verify discovery.
+`--dest-dir` overrides the registry. Use it only when you have verified the agent's skill directory.
 
-## What is included
+### Symlink mode for development
 
-Rustacean contains five cooperating skills. Install them together into one discovery directory because they reference one another by relative paths.
+```bash
+python3 tools/install_skills.py --agent claude-code --project-root "$PROJECT" --mode symlink --apply
+```
+
+Symlinks point at this checkout, so edits take effect without reinstalling. Use copy mode for a stable, reviewable install.
+
+### Operating systems
+
+CI runs on Ubuntu 24.04. Linux and macOS use the same commands. Windows is not covered by the repository's CI; if you use it, run the dry run first and confirm the resolved paths before applying.
+
+---
+
+## Verify discovery
+
+A successful install proves the files were written and hash-verified. It does not prove that your agent loaded them.
+
+1. Restart the agent or start a new session. Some agents load skills only at startup.
+2. Ask the agent to list its skills. All five names should appear:
+   `rust-enterprise-best-practices`, `rust-enterprise-implement`, `rust-enterprise-harden`, `rust-enterprise-audit`, `rust-enterprise-frameworks`.
+3. Use the agent's listing command where one exists, for example `/skills list` in Gemini CLI or `/` in Claude Code.
+4. Run a small task that should trigger a skill and check that the agent applies its rules.
+
+Full procedure: [skills/INSTALLATION.md](skills/INSTALLATION.md).
+
+---
+
+## Why Rustacean
+
+Most agent guidance for Rust is advice without enforcement. Rustacean pairs written engineering rules with the checks that can be automated:
+
+- **Rule IDs you can cite.** The best-practices rulebook defines stable IDs. The other skills reference them, so reviews and audits point to specific rules.
+- **Lint policy as code.** A workspace lint set denies `unwrap`, `expect`, `panic`, unchecked arithmetic, unchecked `as` casts, `unsafe` without a documented block, and `allow` attributes without a reason.
+- **Framework controls.** An approved stack, hard bans, and an inventory gate that is itself tested.
+- **Read-only audits.** The audit skill is designed to report findings with evidence and to change nothing.
+- **Installation you can review.** Dry run by default, a hash-verified plan, and no partial installs.
+
+Skills shape what an agent does. They do not replace compilers, tests, CI, or human review.
+
+---
+
+## What's included
 
 | Skill | Purpose |
 |---|---|
-| [rust-enterprise-best-practices](skills/rust-enterprise-best-practices/SKILL.md) | Normative Rust rulebook, rule IDs, topic coverage, and lint policy |
-| [rust-enterprise-implement](skills/rust-enterprise-implement/SKILL.md) | Requirements-first implementation procedure and reusable templates |
+| [rust-enterprise-best-practices](skills/rust-enterprise-best-practices/SKILL.md) | Normative rulebook, rule IDs, topic coverage, workspace lint policy, banned-pattern gate |
+| [rust-enterprise-implement](skills/rust-enterprise-implement/SKILL.md) | Requirements-first build procedure and templates for new Rust code |
 | [rust-enterprise-harden](skills/rust-enterprise-harden/SKILL.md) | Security, resilience, observability, operations, build, and container controls |
-| [rust-enterprise-audit](skills/rust-enterprise-audit/SKILL.md) | Read-only security and logic audit workflow with evidence-focused findings |
-| [rust-enterprise-frameworks](skills/rust-enterprise-frameworks/SKILL.md) | Approved framework stack, prohibited patterns, and framework inventory controls |
+| [rust-enterprise-audit](skills/rust-enterprise-audit/SKILL.md) | Read-only security and logic audit with evidence-based findings |
+| [rust-enterprise-frameworks](skills/rust-enterprise-frameworks/SKILL.md) | Approved framework stack, prohibited patterns, inventory controls |
 
-Supporting components:
+Install all five together. They reference each other by relative path, and the installer refuses a partial suite.
 
-- <code>crates/rustacean-conformance/</code> — executable conformance validators.
-- <code>tools/validate_skills.py</code> — validates skill frontmatter, referenced files, and rule-ID resolution.
-- <code>tools/install_skills.py</code> — installs and verifies the full skill suite.
-- <code>tools/agent_skill_targets.json</code> — machine-readable agent path registry.
-- <code>tests/python/</code> — tests for the Python validation, framework gate, and installer tools.
-- <code>.github/workflows/</code> — CI, security, CodeQL, and OpenSSF Scorecard workflows.
+### Repository layout
 
-## Pinned toolchain
+```
+crates/rustacean-conformance/   Rust crate: executable inventory validators, strict lint policy
+skills/                         The five skills and INSTALLATION.md
+tools/
+  install_skills.py             Dry-run-first, hash-verified installer
+  validate_skills.py            Frontmatter, reference, and rule-ID validation
+  agent_skill_targets.json      Per-agent discovery paths with evidence grades
+tests/python/                   Unit tests for installer, validator, and framework gate
+docs/                           Research matrix and documentation index
+.github/workflows/              CI, security, CodeQL, OpenSSF Scorecard
+```
 
-The repository pins Rust **1.98.1** in <code>rust-toolchain.toml</code>. Rust 1.98.0 is excluded because of a vtable-generation miscompilation fixed in [Rust 1.98.1](https://blog.rust-lang.org/releases/1.98.1/).
+---
 
 ## Local verification
 
-From a checkout of this repository, run the core validation commands:
+The commands below run the core checks. They are not a substitute for the hosted CI jobs.
 
 ```bash
 python3 -m pip install -r requirements-ci.txt
@@ -149,35 +226,40 @@ cargo test --workspace --locked
 RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --locked
 ```
 
-These are the core local checks, not a substitute for all hosted CI jobs. Hosted workflows additionally run workflow-security linting, shell lint, secret scanning, Rust and Python dependency audits, pull-request dependency review, CodeQL, and OpenSSF Scorecard. See <code>.github/workflows/</code> for the definitions and [contributor guide](CONTRIBUTING.md) for the required merge checks.
+The pinned toolchain is Rust **1.98.1** (`rust-toolchain.toml`). Version 1.98.0 is excluded because of a vtable-generation miscompilation fixed in 1.98.1.
+
+Hosted CI also runs workflow linting (actionlint, zizmor), shell lint, secret scanning, Rust and Python dependency audits, dependency review on pull requests, CodeQL, and OpenSSF Scorecard.
+
+---
+
+## Security model
+
+- **Least privilege in CI.** Default workflow permissions are empty. Each job declares what it needs.
+- **Pinned dependencies.** Every third-party Action is pinned to a full commit SHA. Dependabot proposes updates.
+- **No privileged fork execution.** No `pull_request_target` trigger.
+- **Protected `main`.** Changes arrive by pull request. Automation never merges, approves, or pushes to `main`.
+- **Skills are executable guidance.** Read a skill before installing it, install from a reviewed commit, and review project-scope installs as you would review code. Project-scope installs are committed and shared with everyone who clones the repository.
+
+Known enforcement limits are recorded in [AUDIT_REPORT.md](AUDIT_REPORT.md). Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
+
+---
 
 ## Documentation
 
-The [documentation index](docs/README.md) explains each document's authority, the distinction between written policy and automated enforcement, and how verification evidence should be recorded.
-
 | Document | Use it for |
 |---|---|
-| [Skill installation guide](skills/INSTALLATION.md) | Install options, per-agent paths, discovery verification, upgrades, and removal |
-| [Agent skill discovery matrix](docs/agent-skill-install-matrix.md) | Upstream source links, path evidence, source conflicts, and open verification items |
-| [Audit report](AUDIT_REPORT.md) | Findings, enforcement limits, and dated reassessments |
-| [Contributor guide](CONTRIBUTING.md) | Contribution workflow, branch protection, and required checks |
+| [Installation guide](skills/INSTALLATION.md) | Options, per-agent paths, discovery checks, updating, removing |
+| [Discovery research matrix](docs/agent-skill-install-matrix.md) | Upstream sources, path conflicts, open verification items |
+| [Documentation index](docs/README.md) | Which documents are normative and which are procedural |
+| [Audit report](AUDIT_REPORT.md) | Findings, enforcement limits, dated reassessments |
+| [Contributing](CONTRIBUTING.md) | Workflow, branch protection, required checks |
 | [Security policy](SECURITY.md) | Private vulnerability reporting |
 
-## Engineering and security principles
+---
 
-- **Requirements before implementation:** identify requirements, constraints, assumptions, and acceptance evidence before editing code.
-- **Evidence over assertion:** distinguish automated checks from written guidance and runtime behavior.
-- **Defense in depth:** prefer enforceable controls, explicit trust boundaries, least privilege, and observable failure modes.
-- **Human review remains mandatory:** agent instructions are guidance; code, tests, CI, and reviewers establish whether a change is acceptable.
+## Contributing
 
-The skills document what is verified and what remains uncertain. Do not infer runtime compliance from the existence of a rule, a successful installation, or a passing unrelated check.
-
-## Governance
-
-- <code>main</code> is protected; changes arrive through pull requests.
-- Automation does not merge, approve, or push directly to <code>main</code>.
-- Third-party GitHub Actions are pinned to full commit SHAs; Dependabot proposes updates.
-- Report vulnerabilities through private reporting described in [SECURITY.md](SECURITY.md).
+Open an issue to discuss a change before a large pull request. Pull requests need the required checks to pass and a code owner's review. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
