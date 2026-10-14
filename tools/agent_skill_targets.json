@@ -1,5 +1,5 @@
 {
-  "_about": "Skill discovery locations for coding agents. Paths are templates: 'project' is relative to the project root, 'user' is relative to the user's home directory. 'evidence' is one of: official (vendor documentation), codelab (vendor tutorial), third-party (secondary source), conflicting (vendor sources disagree; verify on the installed version), none (no documented skill directory). Re-verify every entry when upgrading the agent. Last researched: 2026-10-14.",
+  "_about": "Skill discovery locations for coding agents. Paths are templates: 'project' is relative to the project root, 'user' is relative to the user's home directory. The installer selects the FIRST path listed for the requested scope; remaining entries are documented alternatives and are not auto-detected. 'evidence' describes source quality, not a runtime test: official (vendor documentation), codelab (vendor tutorial), third-party (secondary source), conflicting (vendor sources disagree; verify on installed version), none (no documented skill directory). Re-verify every entry when upgrading the agent. Last researched: 2026-10-14.",
   "targets": [
     {
       "agent": "claude-code",
@@ -35,7 +35,7 @@
         "https://developers.openai.com/docs/build-skills",
         "https://github.com/openai/codex/blob/main/codex-rs/skills/src/assets/samples/skill-creator/SKILL.md"
       ],
-      "notes": "The current Codex skills overview documents .agents/skills for repository discovery, $HOME/.agents/skills for user discovery, and /etc/codex/skills for admin discovery. However, the official openai/codex skill-creator sample still recommends $CODEX_HOME/skills (default ~/.codex/skills) as a creation destination. These official sources disagree. Installer defaults follow the discovery overview; do not claim ~/.codex/skills is universally unused. Verify on the installed Codex version."
+      "notes": "The current Codex skills overview documents .agents/skills for repository discovery, $HOME/.agents/skills for user discovery, and /etc/codex/skills for administrator discovery. The official openai/codex skill-creator sample still recommends $CODEX_HOME/skills (default ~/.codex/skills) as a creation destination. The sources disagree; this installer follows the current discovery overview, and users must verify discovery in their installed version."
     },
     {
       "agent": "opencode",
@@ -43,13 +43,13 @@
       "evidence": "official",
       "scope": {
         "project": [
-          ".opencode/skills",
           ".agents/skills",
+          ".opencode/skills",
           ".claude/skills"
         ],
         "user": [
-          ".config/opencode/skills",
           ".agents/skills",
+          ".config/opencode/skills",
           ".claude/skills"
         ]
       },
@@ -57,7 +57,7 @@
         "https://opencode.ai/docs/skills",
         "https://opencode.ai/v2/docs/skills/"
       ],
-      "notes": "Reads .opencode/skills plus the Claude-compatible and agent-compatible locations. The user path is ~/.config/opencode/skills. Skill names must match their directory names."
+      "notes": "The current official docs support .agents/skills, .opencode/skills, and Claude-compatible .claude/skills for projects; the corresponding user paths are ~/.agents/skills, ~/.config/opencode/skills, and ~/.claude/skills. The installer defaults to the shared Agent Skills location."
     },
     {
       "agent": "gemini-cli",
@@ -65,19 +65,19 @@
       "evidence": "official",
       "scope": {
         "project": [
-          ".gemini/skills",
-          ".agents/skills"
+          ".agents/skills",
+          ".gemini/skills"
         ],
         "user": [
-          ".gemini/skills",
-          ".agents/skills"
+          ".agents/skills",
+          ".gemini/skills"
         ]
       },
       "sources": [
         "https://geminicli.com/docs/cli/skills/",
         "https://geminicli.com/docs/cli/creating-skills/"
       ],
-      "notes": "Discovers ~/.gemini/skills or ~/.agents/skills for users and .gemini/skills or .agents/skills for workspaces. Also provides 'gemini skills link' for symlinked development installs."
+      "notes": "Official docs support .agents/skills and .gemini/skills at project and user scope. The installer prefers the shared Agent Skills directory. Gemini also provides 'gemini skills link' for symlinked development installs."
     },
     {
       "agent": "zed",
@@ -99,19 +99,21 @@
     {
       "agent": "antigravity",
       "label": "Google Antigravity",
-      "evidence": "codelab",
+      "evidence": "official",
       "scope": {
         "project": [
+          ".agents/skills",
           ".agent/skills"
         ],
         "user": [
-          ".gemini/antigravity/skills"
+          ".gemini/config/skills"
         ]
       },
       "sources": [
-        "https://codelabs.developers.google.com/getting-started-with-antigravity-skills"
+        "https://www.antigravity.google/docs/skills",
+        "https://www.antigravity.google/docs/cli/gcli-migration"
       ],
-      "notes": "Workspace skills in <workspace>/.agent/skills and global skills in ~/.gemini/antigravity/skills, per Google's codelab. A third-party page says Antigravity CLI succeeds Gemini CLI consumer access; that claim was not verified here."
+      "notes": "Current official docs say .agents/skills is the default and .agent/skills remains backward-compatible. App/IDE user skills live in ~/.gemini/config/skills; Antigravity CLI user skills instead live in ~/.gemini/antigravity-cli/skills. For CLI user scope, pass --dest-dir ~/.gemini/antigravity-cli/skills."
     },
     {
       "agent": "cursor",
@@ -119,36 +121,40 @@
       "evidence": "official",
       "scope": {
         "project": [
+          ".agents/skills",
           ".cursor/skills"
         ],
         "user": [
+          ".agents/skills",
           ".cursor/skills"
         ]
       },
       "sources": [
         "https://cursor.com/docs/skills"
       ],
-      "notes": "Walks .cursor/skills recursively and discovers nested SKILL.md files. Cursor's documentation shows an .agents/skills example, but the discovery location for that path was not confirmed here. Cursor documents no mechanism for one skill to load another, so cross-skill links are read by path."
+      "notes": "Current official docs explicitly support .agents/skills and .cursor/skills at project scope, and ~/.agents/skills and ~/.cursor/skills at user scope. The installer defaults to the shared Agent Skills location. Cursor reads nested SKILL.md files under its skill roots; this suite's skills must remain siblings to resolve peer references."
     },
     {
       "agent": "copilot",
       "label": "GitHub Copilot (VS Code agent)",
-      "evidence": "third-party",
+      "evidence": "official",
       "scope": {
         "project": [
+          ".agents/skills",
           ".github/skills",
-          ".claude/skills",
-          ".agents/skills"
+          ".claude/skills"
         ],
         "user": [
-          ".copilot/skills"
+          ".agents/skills",
+          ".copilot/skills",
+          ".claude/skills"
         ]
       },
       "sources": [
-        "https://github.blog/changelog/2026-04-16-manage-agent-skills-with-github-cli/",
-        "https://github.com/cli/cli/releases/tag/v2.90.0"
+        "https://github.com/microsoft/vscode-docs/blob/main/docs/agent-customization/agent-skills.md",
+        "https://cli.github.com/manual/gh_skill_install"
       ],
-      "notes": "The gh CLI 2.90.0 'gh skill' command installs to the correct directory for the host (public preview). Directory paths come from third-party summaries of VS Code and Copilot documentation and were not confirmed against the vendor page."
+      "notes": "Current Microsoft docs for the VS Code Copilot agent support .github/skills, .claude/skills, and .agents/skills for projects, and ~/.copilot/skills, ~/.claude/skills, and ~/.agents/skills for users. The installer defaults to the shared Agent Skills directory. The GitHub CLI 'gh skill install' command is a separate host-aware install option; the Rustacean installer does not depend on it."
     },
     {
       "agent": "freebuff",
@@ -209,20 +215,25 @@
         "https://www.kimi.com/code/docs/en/kimi-code-cli/customization/skills.html",
         "https://moonshotai.github.io/kimi-cli/en/customization/skills"
       ],
-      "notes": "Newer Kimi Code docs list ~/.kimi-code/skills (overridable with KIMI_CODE_HOME) and .agents/skills. Older kimi-cli docs list ~/.kimi/skills. The product name and paths changed between versions. Verify with the installed version, or pass --skills-dir."
+      "notes": "Current Kimi Code CLI docs explicitly support .agents/skills and .kimi-code/skills (with KIMI_CODE_HOME affecting the latter). Older kimi-cli docs describe ~/.kimi/skills and --skills-dir. The shared .agents/skills path is the current default target, but this entry remains 'conflicting' to force installed-version verification; use --accept-conflicting or --dest-dir only after checking your version."
     },
     {
       "agent": "zcode",
       "label": "Z.AI ZCode",
-      "evidence": "none",
+      "evidence": "official",
       "scope": {
-        "project": [],
-        "user": []
+        "project": [
+          ".zcode/skills"
+        ],
+        "user": [
+          ".zcode/skills"
+        ]
       },
       "sources": [
-        "https://docs.z.ai/devpack/tool/zcode.md"
+        "https://zcode.z.ai/en/docs/skill",
+        "https://zcode.z.ai/en/docs/qa"
       ],
-      "notes": "The official Z.AI ZCode documentation found here covers installation and model configuration only. No skill directory is documented, so the installer refuses this target. An unrelated open-source tool, simonyos/Z-CODE, reads .zcode/skills and is not covered by this entry."
+      "notes": "Current official ZCode docs document .zcode/skills at workspace scope and ~/.zcode/skills at user scope, plus importing skills from other agents. This entry covers Z.AI ZCode; it is unrelated to the open-source simonyos/Z-CODE project."
     }
   ]
 }
