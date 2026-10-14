@@ -1,6 +1,5 @@
 # Static analysis with CodeQL for the languages this repository contains.
-# Rust is not analysed by CodeQL here; Rust is covered by clippy, tests, and the
-# conformance policy in ci.yml.
+# Rust is analysed alongside the Python tooling and GitHub Actions workflows.
 name: codeql
 
 on:
@@ -29,7 +28,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [python, actions]
+        language: [python, actions, rust]
     steps:
       - name: Check out
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
