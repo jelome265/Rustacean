@@ -54,24 +54,37 @@ questions, is in `docs/agent-skill-install-matrix.md`.
 | Agent | `--agent` | Default project directory | Default user directory | Evidence |
 |---|---|---|---|---|
 | Claude Code | `claude-code` | `.claude/skills` | `~/.claude/skills` | official |
-| OpenAI Codex CLI | `codex` | `.agents/skills` | `~/.agents/skills` | official |
-| OpenCode | `opencode` | `.opencode/skills` | `~/.config/opencode/skills` | official |
-| Gemini CLI | `gemini-cli` | `.gemini/skills` | `~/.gemini/skills` | official |
+| OpenAI Codex CLI | `codex` | `.agents/skills` | `~/.agents/skills` | official* |
+| OpenCode | `opencode` | `.agents/skills` | `~/.agents/skills` | official |
+| Gemini CLI | `gemini-cli` | `.agents/skills` | `~/.agents/skills` | official |
 | Zed (Zed Agent) | `zed` | `.agents/skills` | `~/.agents/skills` | official |
-| Google Antigravity | `antigravity` | `.agent/skills` | `~/.gemini/antigravity/skills` | codelab |
-| Cursor | `cursor` | `.cursor/skills` | `~/.cursor/skills` | official |
-| GitHub Copilot | `copilot` | `.github/skills` | `~/.copilot/skills` | third-party |
+| Google Antigravity (app/IDE) | `antigravity` | `.agents/skills` | `~/.gemini/config/skills` | official |
+| Cursor | `cursor` | `.agents/skills` | `~/.agents/skills` | official |
+| GitHub Copilot / VS Code | `copilot` | `.agents/skills` | `~/.agents/skills` | official |
 | Freebuff | `freebuff` | `.agents/skills` | `~/.agents/skills` | third-party |
 | Meta Muse Code | `muse` | `.agents/skills` | `~/.agents/skills` | third-party |
-| Kimi Code CLI | `kimi` | conflicting | conflicting | conflicting |
-| Z.AI ZCode | `zcode` | none documented | none documented | none |
+| Kimi Code CLI | `kimi` | `.agents/skills` | `~/.agents/skills` | conflicting* |
+| Z.AI ZCode | `zcode` | `.zcode/skills` | `~/.zcode/skills` | official |
 
-Use `--dest-dir` for any agent whose path differs on your installed version. A target that
-is refused (`zcode`) or marked conflicting (`kimi`) needs you to confirm the directory
-yourself.
+The installer selects the **first** path listed in the registry for each scope; the matrix
+documents alternatives but the installer does not auto-detect or fall back between them.
+These are documented paths, not evidence that an agent was run and confirmed to discover the
+suite. See the [full research matrix](../docs/agent-skill-install-matrix.md) for sources,
+alternatives, and unverified claims.
 
-Many agents read `.agents/skills`, so a single install there covers several of them. Confirm
-discovery in each agent you use, because the agents' documentation is not uniform.
+`*` Codex's current skills overview and its official skill-creator sample recommend different
+user/creation paths; the installer follows the current discovery overview, but verify your
+installed version. Kimi's newer and older official docs differ; the installer refuses Kimi by
+default unless `--accept-conflicting` is given. Supply an explicit `--dest-dir` if your
+version differs.
+
+**Antigravity CLI note:** the table shows app/IDE user scope. For Antigravity CLI user scope,
+use `--dest-dir ~/.gemini/antigravity-cli/skills`. The older project path `.agent/skills`
+is documented as a backward-compatible alternative; the registry's default is `.agents/skills`.
+
+Many agents read `.agents/skills`, so one project install can cover multiple agents. However,
+user-scope locations and trust rules differ, and a shared directory does not mean that every
+agent will load or follow every skill.
 
 **Codex-specific caveat:** the installer follows the current Codex skills overview: project
 skills in `.agents/skills` and user skills in `~/.agents/skills`. The official
