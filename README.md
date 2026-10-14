@@ -47,3 +47,7 @@ verification table. Read those before relying on any claim.
 ## License
 
 Apache License 2.0. See `LICENSE`.
+
+## Installing the skill suite
+
+The five skills are a cooperating suite. Follow [skills/INSTALLATION.md](skills/INSTALLATION.md) to install all packages into a supported agent's skill-discovery directory and validate cross-skill references. Successful discovery is not a substitute for running code and CI gates.

@@ -7,7 +7,7 @@ description: Enterprise hardening of Rust systems covering security (input bound
 
 Hardening is a set of controls added to a system so that it fails safely, resists attack, degrades predictably, can be operated, and can be proven to be what it claims to be. Hardening is not a checklist of crates. Each control below has a rule ID, a verification method, and a failure mode it prevents.
 
-Read `rust-enterprise-best-practices/SKILL.md` first. This skill cites its BP rules and adds controls on top. When a control here conflicts with a BP rule, the stricter one applies and the conflict is reported.
+Read `../rust-enterprise-best-practices/SKILL.md` first. This skill cites its BP rules and adds controls on top. When a control here conflicts with a BP rule, the stricter one applies and the conflict is reported.
 
 ## HRD-0. Method
 

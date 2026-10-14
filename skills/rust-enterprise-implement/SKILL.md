@@ -7,7 +7,9 @@ description: Enterprise Rust implementation procedure. Use when creating, extend
 
 This skill builds code. It does not set the rules (rust-enterprise-best-practices does), does not add security controls beyond the baseline (rust-enterprise-harden does), and does not judge existing code (rust-enterprise-audit does). If a requirement touches authentication, money, personal data, external input or infrastructure, also apply rust-enterprise-harden before writing code.
 
-Read `rust-enterprise-best-practices/SKILL.md` first. Every IMP rule below is a precondition for the BP rules it cites.
+Read `../rust-enterprise-best-practices/SKILL.md` first. Every IMP rule below is a precondition for the BP rules it cites.
+
+Before modifying code, follow the binding execution procedure in `references/hardcore-agent-execution-contract.md`. It requires evidence-first investigation, authoritative research, a plan and acceptance tests, real production paths, honest verification, and explicit BLOCKED/NOT RUN status for missing evidence. It supplements this skill; it does not relax project-specific requirements.
 
 ## IMP-0. Non-negotiable constraints
 
@@ -260,7 +262,7 @@ If the change touches any of the following, load and apply rust-enterprise-harde
 
 ## IMP-8. Phase 7 — the gate
 
-Run `rust-enterprise-best-practices/scripts/rust-gate.sh`. It runs format, clippy with `-D warnings`, tests, doctests, docs, supply chain, MSRV, the pattern scan, and conditional Miri and fuzz.
+Run `../rust-enterprise-best-practices/scripts/rust-gate.sh`. It runs format, clippy with `-D warnings`, tests, doctests, docs, supply chain, MSRV, the pattern scan, and conditional Miri and fuzz.
 
 - **IMP-16 (BLOCKER).** The gate passes locally with the same toolchain CI uses before any PR is opened. If a tool is missing, install it. A missing tool is a failure.
 - **IMP-17 (BLOCKER).** New dependencies follow BP-DP-01: justification in the PR, `cargo deny check` passing, `cargo vet` attestation or a documented audit request.
@@ -310,10 +312,11 @@ Commit hygiene: Conventional Commits, one logical change per commit, each commit
 
 ## IMP-12. Definition of done
 
+- [ ] The hardcore execution contract was followed; facts, assumptions, and unverified items are distinguished.
 - [ ] Phase 0 baseline recorded; baseline was green before the change.
 - [ ] Every invariant and trust-boundary entry point has a test.
 - [ ] Test list was written before implementation; each test was seen failing first.
-- [ ] Gate passes: `rust-enterprise-best-practices/scripts/rust-gate.sh` exits 0 with the pinned toolchain.
+- [ ] Gate passes: `../rust-enterprise-best-practices/scripts/rust-gate.sh` exits 0 with the pinned toolchain.
 - [ ] No `gate-allow` markers added without reviewer-visible reasons.
 - [ ] No BP rule relaxed; exceptions recorded as ADRs with owner and expiry.
 - [ ] Public API documented; semver impact stated for library crates (BP-MO-03).
@@ -325,3 +328,4 @@ Commit hygiene: Conventional Commits, one logical change per commit, each commit
 ## IMP-13. References
 
 - `references/templates.md`: toolchain pin, root and member `Cargo.toml`, `deny.toml`, clippy and rustfmt configuration, CI workflow with pinned actions, fuzz and property test skeletons, config checklist.
+- `references/hardcore-agent-execution-contract.md`: binding end-to-end procedure for investigation, research, planning, implementation, real integration tests, evidence tracking, and PR handoff.

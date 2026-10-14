@@ -7,7 +7,7 @@ description: Enforced framework-specific practice for Rust services. Defines the
 
 Frameworks are where most production Rust defects enter: a default with no timeout, a router with no body limit, a deprecated constructor, a second async runtime, a client that trusts every certificate. This skill makes framework practice enforced, not advisory. Each rule names the mechanism that enforces it and the evidence that verified the claim.
 
-Read `rust-enterprise-best-practices/SKILL.md` first. This skill refines BP rules for named frameworks and does not relax any of them. Hardening controls (SEC, RES, OBS) are in `rust-enterprise-harden`. Audit procedures are in `rust-enterprise-audit`.
+Read `../rust-enterprise-best-practices/SKILL.md` first. This skill refines BP rules for named frameworks and does not relax any of them. Hardening controls (SEC, RES, OBS) are in `rust-enterprise-harden`. Audit procedures are in `rust-enterprise-audit`.
 
 ## FW-0. The approved stack
 

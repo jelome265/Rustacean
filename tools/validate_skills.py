@@ -6,7 +6,8 @@ Checks for every skills/<name>/SKILL.md:
   2. name equals the folder name and matches ^[a-z0-9-]{1,64}$.
   3. description is 1..1024 characters and contains no unquoted ': ' that would break YAML.
   4. Every relative file reference in SKILL.md (`references/...`, `scripts/...`) exists.
-  5. Every rule ID cited anywhere in the package resolves to a defined rule ID.
+  5. Every explicit sibling-relative peer skill link to `../rust-enterprise-*/SKILL.md` resolves to a matching directory.
+  6. Every rule ID cited anywhere in the package resolves to a defined rule ID.
 
 Exit codes: 0 pass, 1 violations, 2 usage or missing dependency.
 Requires PyYAML (pip install pyyaml). A missing dependency is an error, never a skip.
@@ -25,6 +26,7 @@ RULE_PREFIXES = "BP|SEC|RES|OBS|OPS|BLD|CTR|DB|CFG|IMP|AUD|HRD|FW"
 DEF_RE = re.compile(rf"\*\*((?:{RULE_PREFIXES})-[A-Z]*-?\d+[A-Z]?(?:-\d+)?)")
 CITE_RE = re.compile(rf"\b((?:{RULE_PREFIXES})-[A-Z]{{1,8}}(?:-[A-Z0-9]{{1,8}})?-?\d{{1,3}}[A-Z]?)\b")
 REF_RE = re.compile(r"`((?:references|scripts)/[A-Za-z0-9_./-]+)`|\]\(((?:references|scripts)/[A-Za-z0-9_./-]+)\)")
+PEER_SKILL_RE = re.compile(r"`(\.\./(rust-enterprise-[a-z0-9-]+)/SKILL\.md)`")
 FM_RE = re.compile(r"^---\n(.*?)\n---\n", re.S)
 NAME_RE = re.compile(r"^[a-z0-9-]{1,64}$")
 
@@ -74,6 +76,16 @@ def main(root):
             rel = ref_match.group(1) or ref_match.group(2)
             if not (folder / rel).exists():
                 violations.append(f"{skill}: referenced file does not exist: {rel}")
+
+        for peer_match in PEER_SKILL_RE.finditer(text):
+            rel, peer_name = peer_match.group(1), peer_match.group(2)
+            peer_file = folder / rel
+            if not peer_file.is_file():
+                violations.append(f"{skill}: referenced peer skill does not exist: {rel}")
+            elif peer_file.parent.name != peer_name:
+                violations.append(
+                    f"{skill}: peer skill folder '{peer_file.parent.name}' does not match '{peer_name}' in {rel}"
+                )
 
     for path, text in all_text.items():
         for cited in set(CITE_RE.findall(text)):

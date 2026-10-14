@@ -102,6 +102,25 @@ class ValidateSkillsTest(unittest.TestCase):
         self.assertEqual(code, 1, out)
         self.assertIn("referenced file does not exist: references/missing.md", out)
 
+    def test_relative_peer_skill_link_passes(self):
+        alpha = GOOD_SKILL.format(name="rust-enterprise-alpha").replace(
+            "references/notes.md", "../rust-enterprise-beta/SKILL.md"
+        )
+        beta = GOOD_SKILL.format(name="rust-enterprise-beta")
+        self.write_skill("rust-enterprise-alpha", alpha)
+        self.write_skill("rust-enterprise-beta", beta)
+        code, out = self.validate()
+        self.assertEqual(code, 0, out)
+
+    def test_missing_peer_skill_link_fails(self):
+        alpha = GOOD_SKILL.format(name="rust-enterprise-alpha").replace(
+            "references/notes.md", "../rust-enterprise-missing/SKILL.md"
+        )
+        self.write_skill("rust-enterprise-alpha", alpha)
+        code, out = self.validate()
+        self.assertEqual(code, 1, out)
+        self.assertIn("referenced peer skill does not exist", out)
+
     def test_undefined_rule_id_fails(self):
         text = GOOD_SKILL.format(name="alpha") + "\nAlso cites BP-XX-99 which is undefined.\n"
         self.write_skill("alpha", text)

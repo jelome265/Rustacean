@@ -79,3 +79,25 @@ jobs:
 
       - name: Audit Python dependencies for known vulnerabilities
         run: pip-audit --requirement requirements-ci.txt --strict --progress-spinner off
+
+  rust-dependency-audit:
+    name: rust-dependency-audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # cargo uses the exact version pinned by rust-toolchain.toml.
+      - name: Show pinned toolchain
+        run: rustup show active-toolchain
+
+      - name: Install pinned cargo-audit
+        run: cargo install cargo-audit --locked --version 0.22.2
+
+      - name: Audit locked Rust dependencies
+        run: cargo audit --deny warnings
