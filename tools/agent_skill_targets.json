@@ -32,9 +32,10 @@
       },
       "sources": [
         "https://developers.openai.com/codex/skills",
-        "https://developers.openai.com/docs/build-skills"
+        "https://developers.openai.com/docs/build-skills",
+        "https://github.com/openai/codex/blob/main/codex-rs/skills/src/assets/samples/skill-creator/SKILL.md"
       ],
-      "notes": "Scans .agents/skills in each directory from the working directory up to the repository root, then $HOME/.agents/skills, then /etc/codex/skills (admin), then built-in system skills. The ~/.codex/skills path in some blog posts comes from an earlier experimental build and is not used here."
+      "notes": "The current Codex skills overview documents .agents/skills for repository discovery, $HOME/.agents/skills for user discovery, and /etc/codex/skills for admin discovery. However, the official openai/codex skill-creator sample still recommends $CODEX_HOME/skills (default ~/.codex/skills) as a creation destination. These official sources disagree. Installer defaults follow the discovery overview; do not claim ~/.codex/skills is universally unused. Verify on the installed Codex version."
     },
     {
       "agent": "opencode",
