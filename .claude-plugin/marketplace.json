@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "rustacean",
+  "description": "Enterprise Rust engineering skills, backed by executable checks.",
+  "owner": {
+    "name": "jelome265",
+    "url": "https://github.com/jelome265"
+  },
+  "plugins": [
+    {
+      "name": "rustacean",
+      "source": "./",
+      "description": "Five cooperating Rust skills: best practices, implement, harden, audit, frameworks."
+    }
+  ]
+}
