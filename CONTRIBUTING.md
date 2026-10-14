@@ -35,9 +35,11 @@ F-11 documents the earlier state and has a dated reassessment in `AUDIT_REPORT.m
 python3 -m pip install -r requirements-ci.txt
 python3 tools/validate_skills.py skills
 python3 -m unittest discover -s tests/python -v
+python3 tools/install_skills.py --list
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --locked -- -D warnings
 cargo test --workspace --locked
+RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --locked
 ```
 
 ## Changing a pinned action
