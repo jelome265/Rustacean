@@ -9,21 +9,24 @@
 
 ## Required checks for merge
 
-These job names must pass before a merge is possible:
+GitHub reports each job by its bare job name. Rulesets match required checks by that exact
+name, so the names below are the ones to require. Verified against the check runs on a
+pull request head (`GET /repos/{owner}/{repo}/commits/{sha}/check-runs`).
 
-- `ci / workflow-security`
-- `ci / validate-skills`
-- `ci / python-tests`
-- `ci / shell-lint`
-- `ci / rust-conformance`
-- `security / dependency-review`
-- `security / secret-scan`
-- `security / python-dependency-audit`
-- `security / rust-dependency-audit`
-- `codeql / analyze (python)`, `codeql / analyze (actions)`, and `codeql / analyze (rust)`
+- `workflow-security`
+- `validate-skills`
+- `python-tests`
+- `shell-lint`
+- `rust-conformance`
+- `dependency-review` (pull requests only)
+- `secret-scan`
+- `python-dependency-audit`
+- `rust-dependency-audit`
+- `analyze (python)`, `analyze (actions)`, `analyze (rust)`
 
-Branch protection that enforces these is configured in the repository settings. The
-settings are part of the governance record; a change to them is announced to the owner.
+**Status of enforcement:** these names are documented here, but the `Main` ruleset does not
+yet require them. Until the owner adds them to the ruleset, a pull request can merge
+without passing these checks. See `AUDIT_REPORT.md`, finding F-11.
 
 ## Local checks
 
