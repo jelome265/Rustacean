@@ -86,14 +86,6 @@ Many agents read `.agents/skills`, so one project install can cover multiple age
 user-scope locations and trust rules differ, and a shared directory does not mean that every
 agent will load or follow every skill.
 
-**Codex-specific caveat:** the installer follows the current Codex skills overview: project
-skills in `.agents/skills` and user skills in `~/.agents/skills`. The official
-`openai/codex` skill-creator sample still suggests `$CODEX_HOME/skills` (default
-`~/.codex/skills`) as a creation destination. These official sources conflict, so this is
-not proof that the older path is universally unused. See
-[the research matrix](../docs/agent-skill-install-matrix.md#openai-codex-cli-official) and
-verify the skills list in the Codex version you actually run.
-
 ## Confirm discovery
 
 Installing a skill does not prove that the agent discovered it. After each install:
