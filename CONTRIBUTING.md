@@ -7,36 +7,45 @@
 - A code owner reviews and merges. Automation never merges, approves, or force-pushes.
 - Commits follow Conventional Commits (for example `feat(frameworks): ...`, `ci: ...`).
 
-## Required checks for merge
+## CI check names and merge requirements
 
-GitHub reports each job by its bare job name. Rulesets match required checks by that exact
-name, so the names below are the ones to require. Verified against the check runs on a
-pull request head (`GET /repos/{owner}/{repo}/commits/{sha}/check-runs`).
+GitHub reports each job by its bare job name. The active `Main` ruleset now requires the
+checks listed below by these exact names. This was verified by reading the repository's
+active ruleset on 2026-10-14; re-check this list whenever workflow job names or rulesets change.
 
 - `workflow-security`
 - `validate-skills`
 - `python-tests`
 - `shell-lint`
 - `rust-conformance`
-- `dependency-review` (pull requests only)
 - `secret-scan`
 - `python-dependency-audit`
 - `rust-dependency-audit`
 - `analyze (python)`, `analyze (actions)`, `analyze (rust)`
 
-**Status of enforcement:** these names are documented here, but the `Main` ruleset does not
-yet require them. Until the owner adds them to the ruleset, a pull request can merge
-without passing these checks. See `AUDIT_REPORT.md`, finding F-11.
+**Additional PR check:** `dependency-review` runs only for pull requests in the security workflow, but it is not one of the 11 status contexts currently configured as required by the ruleset.
 
-## Local checks
+**Current enforcement:** the active `Main` ruleset requires all 11 named status checks,
+requires one approving review, and requires code-owner review. Required-check state is
+repository configuration, not a property of this Markdown file. The historical audit finding
+F-11 documents the earlier state and has a dated reassessment in `AUDIT_REPORT.md`.
+
+## Core local checks
+
+The commands below cover core source, Rust, Python, and skill-registry validation. Hosted CI
+also runs workflow-security linting, shell lint, full-history secret scanning, Python and Rust
+dependency audits, PR-only dependency review, and CodeQL across Python, GitHub Actions, and Rust.
+Use the run linked from the PR to verify those hosted checks; a local subset is not a green CI claim.
 
 ```bash
 python3 -m pip install -r requirements-ci.txt
 python3 tools/validate_skills.py skills
 python3 -m unittest discover -s tests/python -v
+python3 tools/install_skills.py --list
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --locked -- -D warnings
 cargo test --workspace --locked
+RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --locked
 ```
 
 ## Changing a pinned action

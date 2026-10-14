@@ -21,11 +21,16 @@ installation guide).
 
 ## The shared location: `.agents/skills`
 
-Several agents read the same project and user directories: `.agents/skills` in the project
-and `~/.agents/skills` for the user. This is the most portable install target. Confirmed in
-official documentation for Codex, Gemini CLI, OpenCode, Zed, and Codebuff/Freebuff. The
-installer's `codex` target uses it, and so do the Freebuff and Muse entries. Muse Code's
-project scope skips skills in an untrusted workspace (see below).
+As of 2026-10-14, current official product documentation explicitly lists project-level
+`.agents/skills` for Codex CLI, OpenCode, Gemini CLI, Zed, Cursor, VS Code Copilot,
+Kimi Code CLI, and Antigravity. This makes it the installer default for those products where
+that current path is documented. Freebuff and Muse also list it, but their discovery evidence
+is weaker (see their individual entries).
+
+The user-level path is not equally universal: use the paths listed for each agent below.
+Antigravity, for example, documents product-specific global paths. A path appearing in a
+vendor document is source evidence, not proof that a particular installed version discovered
+these skills; runtime discovery remains unverified in this repository.
 
 ## Agent-by-agent findings
 
@@ -77,15 +82,17 @@ after installing. `AGENTS.md` remains a separate repository-instruction file, no
   `gemini skills enable|disable`, `/skills reload`
 - Sources: https://geminicli.com/docs/cli/skills/ and https://geminicli.com/docs/cli/creating-skills/
 
-### Google Antigravity: codelab
+### Google Antigravity: official
 
-- Workspace: `<workspace>/.agent/skills/` (note: singular `.agent`)
-- Global: `~/.gemini/antigravity/skills/`
-- Source: Google's Antigravity skills codelab (`codelabs.developers.google.com/getting-started-with-antigravity-skills`),
-  retrieved in several language versions with the same paths.
-- Unverified claim: a third-party page says Antigravity CLI succeeds Gemini CLI, and that
-  consumer Gemini CLI access ends in June 2026. Not verified. If true, the paths for the
-  successor CLI may differ from the IDE paths above.
+- Project: `.agents/skills/<skill-folder>/`. The old `.agent/skills/` path is supported for
+  backward compatibility.
+- Antigravity app and IDE user scope: `~/.gemini/config/skills/<skill-folder>/`
+- Antigravity CLI user scope: `~/.gemini/antigravity-cli/skills/<skill-folder>/`
+- Source: https://www.antigravity.google/docs/skills
+- CLI migration/source details: https://www.antigravity.google/docs/cli/gcli-migration
+- The registry defaults to the shared project path and the app/IDE user path. For CLI user
+  scope, explicitly pass `--dest-dir ~/.gemini/antigravity-cli/skills`. The installer does
+  not guess which Antigravity surface you run.
 
 ### Zed (Zed Agent): official
 
@@ -97,28 +104,26 @@ after installing. `AGENTS.md` remains a separate repository-instruction file, no
 
 ### Cursor: official
 
-- Project: `.cursor/skills/`, searched recursively for nested `SKILL.md` files
-- User: `~/.cursor/skills/`
+- Project: `.agents/skills/` and `.cursor/skills/`; Cursor also searches nested `SKILL.md`
+  files under supported skill roots.
+- User: `~/.agents/skills/` and `~/.cursor/skills/`
 - Source: https://cursor.com/docs/skills
-- Notes: Cursor's example layout uses `.agents/`, but the discovery of `.agents/skills` by
-  Cursor was not confirmed here, so the installer does not target it for Cursor.
-  Cursor documents no mechanism for one skill to load another. Cross-skill references are
-  read as file paths, which is why the installer keeps the five skills together.
+- The current official docs explicitly document `.agents/skills`; the registry now defaults
+  to that shared path. Cross-skill references are file paths, so the installer keeps all five
+  skills as siblings. Cursor discovery in an installed runtime is still unverified here.
 
-### GitHub Copilot (VS Code agent): third-party
+### GitHub Copilot (VS Code agent): official
 
-- Project: `.github/skills/`. User: `~/.copilot/skills/`.
-- Third-party summaries also say VS Code recognises `.claude/skills/` and `.agents/skills/`.
-  This was not confirmed against VS Code's own documentation.
-- Preferred install route: `gh skill` in GitHub CLI 2.90.0 (public preview, April 2026). It
-  installs into the correct directory for the host, with `--agent` and `--scope` flags, and
-  supports Copilot, Claude Code, Cursor, Codex, Gemini CLI and Antigravity. Source:
-  https://github.blog/changelog/2026-04-16-manage-agent-skills-with-github-cli/
-- `gh skill publish --dry-run` validates against the Agent Skills specification. That check
-  has not been run against this suite.
-- Not verified: whether `gh skill install OWNER/REPO <skill>` installs a skill from a
-  monorepo subdirectory such as `skills/rust-enterprise-harden`. The installer does not
-  depend on it.
+- Project: `.github/skills/`, `.claude/skills/`, and `.agents/skills/`.
+- User: `~/.copilot/skills/`, `~/.claude/skills/`, and `~/.agents/skills/`.
+- Official VS Code source: https://github.com/microsoft/vscode-docs/blob/main/docs/agent-customization/agent-skills.md
+- The installer defaults to the shared `.agents/skills` path; the native Copilot paths remain
+  available as alternatives.
+- GitHub CLI also provides host-aware `gh skill install` with `--agent` and `--scope`:
+  https://cli.github.com/manual/gh_skill_install. This installer does not depend on it.
+- The `gh skill publish --dry-run` validator has not been run against this suite.
+- Not verified: whether `gh skill install OWNER/REPO <skill>` installs from a monorepo
+  subdirectory such as `skills/rust-enterprise-harden`.
 
 ### Freebuff (Codebuff): third-party (paths from Codebuff's official docs)
 
@@ -149,25 +154,28 @@ after installing. `AGENTS.md` remains a separate repository-instruction file, no
 
 ### Kimi Code CLI (Moonshot): conflicting
 
-- Newer Kimi Code docs: `~/.kimi-code/skills/` (moved with `KIMI_CODE_HOME`), `.kimi-code/skills/`
-  in projects, and also `~/.agents/skills/` and `.agents/skills/`. Built-in skills have the
-  lowest priority.
-- Older kimi-cli docs: `~/.kimi/skills/` and `.kimi/skills/`. Also `kimi --skills-dir <path>`.
-- Sources: https://www.kimi.com/code/docs/en/kimi-code-cli/customization/skills.html (newer) and
-  https://moonshotai.github.io/kimi-cli/en/customization/skills (older)
-- Third-party aggregators say Kimi also reads `.claude/skills/`. Not confirmed.
-- The installer refuses this target unless `--accept-conflicting` is given. Use `--dest-dir`
-  with the directory your installed version reads.
+- Current Kimi Code CLI docs support project `.agents/skills/` and `.kimi-code/skills/`,
+  plus user `~/.agents/skills/` and `~/.kimi-code/skills/`. `KIMI_CODE_HOME` changes the
+  Kimi-specific directory.
+- Older kimi-cli docs describe `~/.kimi/skills/`, `.kimi/skills/`, and
+  `kimi --skills-dir <path>`.
+- Sources: https://www.kimi.com/code/docs/en/kimi-code-cli/customization/skills.html (current)
+  and https://moonshotai.github.io/kimi-cli/en/customization/skills (legacy)
+- Because these official docs describe different generations and paths, the registry keeps
+  this target at evidence grade `conflicting`. It defaults to the current shared
+  `.agents/skills` path but refuses to write until `--accept-conflicting` is passed, or a
+  `--dest-dir` is supplied after verifying the installed version.
+- Third-party claims about `.claude/skills/` were not confirmed.
 
-### Z.AI ZCode: none
+### Z.AI ZCode: official
 
-- Official Z.AI ZCode documentation (`docs.z.ai/devpack/tool/zcode.md`) covers installation
-  and model configuration. No skill directory is documented.
-- Third-party ZCode skill packages are installed by copying into an unnamed "agent skills
-  directory". No path is given.
-- The installer refuses this target.
-- **Not the same product.** `simonyos/Z-CODE` is an unrelated open-source terminal agent. It
-  reads `.zcode/skills/` and `~/.config/zcode/skills/`. Do not use those paths for ZCode.
+- Project: `.zcode/skills/<skill-name>/SKILL.md`
+- User: `~/.zcode/skills/<skill-name>/SKILL.md`
+- Sources: https://zcode.z.ai/en/docs/skill and https://zcode.z.ai/en/docs/qa
+- Current official documentation describes a Skills manager and importing skills from external
+  agents, and the FAQ confirms both project and user locations. The registry now installs to
+  these documented paths. Runtime discovery remains unverified in this repository.
+- This entry covers Z.AI ZCode, not unrelated projects with similar names.
 
 ## Tools that generate guidance files rather than reading SKILL.md
 
@@ -199,8 +207,11 @@ none. Each agent's own documentation was not checked.
 
 ## Open items
 
-- Run each agent's listing command after an install and record the result: Codex, Gemini
-  CLI, OpenCode, Zed, Cursor, Claude Code, Freebuff, Muse, Antigravity, and Copilot.
-- Confirm the Kimi path on a current release.
-- Retrieve the official Muse Code and Antigravity CLI skill documentation.
-- Check whether a ZCode skill directory exists in a current build.
+- Run each agent's discovery/listing command after an install and record the result. None of
+  the supported agents has been installed and exercised as part of this repository change.
+- Verify Kimi Code CLI's shared-path behavior against the exact installed version before
+  bypassing the installer's conflict guard.
+- Retrieve the official Muse Code skills reference; the paths remain third-party evidence.
+- Verify Antigravity app/IDE and CLI user-level paths separately in running installations.
+- Capture a ZCode import/discovery run and verify that its installed version reads the documented
+  `.zcode/skills` locations.

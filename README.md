@@ -16,15 +16,20 @@ This repository contains:
 | `tools/install_skills.py` | Installs the five-skill suite into an agent's skill directory: dry-run by default, verifies by hash and peer links |
 | `tools/agent_skill_targets.json` | Skill discovery paths per agent, with evidence grades and sources |
 | `docs/agent-skill-install-matrix.md` | Research record: where each coding agent reads skills, conflicts, and what is unverified |
-| `tests/python/` | Unit tests for the framework gate and the skill validator |
+| `tests/python/` | Unit tests for the framework gate, skill validator, and installer |
 | `.github/workflows/` | CI, security, CodeQL, and OpenSSF Scorecard workflows |
 
 ## Pinned toolchain
 
 Rust `1.98.1`, from `rust-toolchain.toml`. Version `1.98.0` is excluded because of a
-miscompilation in vtable generation that 1.98.1 fixes.
+miscompilation in vtable generation fixed in [Rust 1.98.1](https://blog.rust-lang.org/releases/1.98.1/).
 
-## Running the checks locally
+## Core local checks
+
+These commands cover the core source, Rust, and Python checks; they are not a substitute for
+all hosted CI jobs. CI additionally runs workflow-security linting, shell lint, secret scanning,
+Python and Rust dependency audits, pull-request dependency review, and CodeQL. See the
+[documentation index](docs/README.md) and `.github/workflows/` for the current check definitions.
 
 ```bash
 python3 -m pip install -r requirements-ci.txt
@@ -33,6 +38,7 @@ python3 -m unittest discover -s tests/python -v
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --locked -- -D warnings
 cargo test --workspace --locked
+RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --locked
 ```
 
 ## Governance
@@ -42,10 +48,13 @@ cargo test --workspace --locked
 - Every third-party action is pinned to a full commit SHA. Dependabot proposes updates.
 - Security reports go through private vulnerability reporting (see `SECURITY.md`).
 
-## Status and limits
+## Documentation and evidence
 
-The skill documents state exactly what was verified and what was not. See each skill's
-verification table. Read those before relying on any claim.
+Start with the [documentation index](docs/README.md). It identifies the normative rulebooks,
+implementation/hardening/audit procedures, installer research, validation tools, governance
+policy, and where evidence lives. The skills state what was verified and what was not; use the
+[audit report](AUDIT_REPORT.md) for known enforcement limits. Skill discovery or rule text alone
+does not prove runtime compliance.
 
 ## License
 

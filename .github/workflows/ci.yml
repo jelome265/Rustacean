@@ -1,4 +1,5 @@
-# Main CI gate. Every job is required for merge (see CONTRIBUTING.md, branch protection).
+# Main CI gate. Required status-check names and active ruleset state are documented in CONTRIBUTING.md.
+# Keep that list synchronized with these job names; the repository ruleset, not this comment, enforces merges.
 #
 # Security properties of this file:
 #   * Default permissions are empty; each job declares the minimum it needs.

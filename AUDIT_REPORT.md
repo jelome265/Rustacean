@@ -76,9 +76,9 @@ Baseline CI runs formatting, Clippy, workspace tests and rustdoc. The security w
 
 **Do not blindly wire the whole script into CI or add empty placeholder policy files.** First create a genuine conformance fixture/profile that satisfies those policy requirements, or clearly scope the reusable gate as a consumer-project bootstrap gate. In the meantime, this PR adds a real, pinned-version cargo-audit check for this repository's Cargo.lock. CI must run to show its actual result.
 
-### F-06 — Standard issue templates are absent
+### F-06 — Standard issue templates were absent at the audited baseline
 **Severity:** Minor  
-**Status:** Finding; not changed in this PR.
+**Status at baseline:** Accurate for the audited snapshot; resolved in the current tree. See the dated reassessment below.
 
 The root .github directory has CODEOWNERS, Dependabot, PR template and workflows but no ISSUE_TEMPLATE directory was found.
 
@@ -120,9 +120,9 @@ Rust async uses Future, async/await and an executor/runtime; JavaScript Promise 
 
 Rust async reference: https://rust-lang.github.io/async-book/part-guide/async-await.html
 
-### F-11 — Required checks are not enforced by the active ruleset
+### F-11 — Required checks and code-owner review were missing at the audited baseline
 **Severity:** High for merge governance  
-**Status:** Confirmed by read-only API inspection after this audit's first revision. Owner action required.
+**Status at baseline:** Confirmed by a read-only API inspection after this audit's first revision; superseded by the current-state reassessment below.
 
 Correction: the first revision of this report stated that branch protection returned HTTP 403 and could not be verified. A later read-only check with a repository-scoped token returned:
 
@@ -134,7 +134,7 @@ Correction: the first revision of this report stated that branch protection retu
 - `Main` requires `non_fast_forward` protection, so force pushes to the default branch are blocked.
 - Code scanning default setup is `not-configured`, so the advanced CodeQL workflow is the only scanner and there is no conflicting default setup.
 
-**Remediation (owner decision, not applied by this PR):** add the check names from CONTRIBUTING.md to the `Main` ruleset as required status checks, and set `require_code_owner_review` to `true`. Restrict or remove the admin bypass unless break-glass access is documented. Verify the change by opening a test pull request whose checks fail, and confirming that it cannot merge.
+**Remediation identified at baseline:** add the check names from CONTRIBUTING.md to the `Main` ruleset as required status checks and set `require_code_owner_review` to `true`. The dated reassessment below confirms those two controls are now enabled. Admin/bypass policy and the enforcement of a deliberately failing test PR remain separate owner-level verification items.
 
 ## Changes included in this PR
 
@@ -162,3 +162,48 @@ Correction: the first revision of this report stated that branch protection retu
 - Agent Skills best practices: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
 - Rust async book: https://rust-lang.github.io/async-book/part-guide/async-await.html
 - RustSec cargo-audit: https://github.com/rustsec/rustsec/tree/main/cargo-audit
+
+
+---
+
+## Documentation and governance reassessment — 2026-10-14
+
+This dated addendum updates findings from the original audited baseline. It does not rewrite
+the historical observations above; use this section for the current repository state verified
+during the documentation-completeness pass.
+
+### Status changes
+
+- **F-06 (issue templates): RESOLVED in the current tree.** Both
+  \`.github/ISSUE_TEMPLATE/bug_report.md\` and
+  \`.github/ISSUE_TEMPLATE/feature_request.md\` are present. Keep security vulnerability
+  reports private via \`SECURITY.md\`; public issue templates must not invite exploit details,
+  credentials, or customer data.
+- **F-11 (required checks and code-owner review): RESOLVED in current repository configuration.**
+  A fresh read of the active \`Main\` ruleset at
+  \`https://api.github.com/repos/jelome265/Rustacean/rulesets/25018492\` on 2026-10-14 showed
+  11 required status-check contexts: \`workflow-security\`, \`validate-skills\`,
+  \`python-tests\`, \`shell-lint\`, \`rust-conformance\`, \`secret-scan\`,
+  \`python-dependency-audit\`, \`rust-dependency-audit\`, \`analyze (python)\`,
+  \`analyze (actions)\`, and \`analyze (rust)\`. The same ruleset requires one approving review
+  and \`require_code_owner_review: true\`; it also forbids non-fast-forward updates and has a
+  CodeQL code-scanning rule. These are configuration findings, not a claim that any particular
+  PR's checks passed.
+- **Installer discovery evidence: UPDATED, still runtime-unverified.** The install registry and
+  research matrix now use current official paths for Cursor, VS Code/Copilot, Antigravity and
+  Z.AI ZCode, and retain an explicit conflict warning for Kimi. Codex official sources continue
+  to disagree about a user skill creation/discovery path. No agent runtime was installed and
+  exercised as part of this review; successful file installation is not proof of discovery or
+  compliance.
+- **Documentation consistency: IN PROGRESS until CI and PR review complete.** The repository
+  contains a maintained documentation index, updated agent-path matrix, installation table,
+  and clearer source-of-truth distinctions between normative rules, automated gates, current
+  repository configuration, and observed test results. All changes remain reviewable in a PR.
+
+### Evidence boundary for this reassessment
+
+The active ruleset was inspected through the GitHub REST read-only endpoint on 2026-10-14.
+Agent destination paths were checked against vendor documentation, but no Codex, Cursor,
+Copilot, Gemini, Antigravity, Kimi, ZCode, Muse, Freebuff, Zed or Claude runtime was launched
+to confirm live discovery. Tests and CI must be evaluated against the latest commit under
+review; results from an earlier commit are not evidence for later changes.
