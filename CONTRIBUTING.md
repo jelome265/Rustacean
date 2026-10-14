@@ -18,11 +18,12 @@ active ruleset on 2026-10-14; re-check this list whenever workflow job names or 
 - `python-tests`
 - `shell-lint`
 - `rust-conformance`
-- `dependency-review` (pull requests only)
 - `secret-scan`
 - `python-dependency-audit`
 - `rust-dependency-audit`
 - `analyze (python)`, `analyze (actions)`, `analyze (rust)`
+
+**Additional PR check:** `dependency-review` runs only for pull requests in the security workflow, but it is not one of the 11 status contexts currently configured as required by the ruleset.
 
 **Current enforcement:** the active `Main` ruleset requires all 11 named status checks,
 requires one approving review, and requires code-owner review. Required-check state is
