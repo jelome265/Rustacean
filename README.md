@@ -13,6 +13,9 @@ This repository contains:
 | `skills/rust-enterprise-frameworks/` | Approved framework stack, hard bans, artefact gate, inventory patterns |
 | `crates/rustacean-conformance/` | Executable form of the inventory validators, tested under the strict lint policy |
 | `tools/validate_skills.py` | Validates skill frontmatter, referenced files, and rule-ID resolution |
+| `tools/install_skills.py` | Installs the five-skill suite into an agent's skill directory: dry-run by default, verifies by hash and peer links |
+| `tools/agent_skill_targets.json` | Skill discovery paths per agent, with evidence grades and sources |
+| `docs/agent-skill-install-matrix.md` | Research record: where each coding agent reads skills, conflicts, and what is unverified |
 | `tests/python/` | Unit tests for the framework gate and the skill validator |
 | `.github/workflows/` | CI, security, CodeQL, and OpenSSF Scorecard workflows |
 
