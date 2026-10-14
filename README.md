@@ -22,7 +22,7 @@ This repository contains:
 ## Pinned toolchain
 
 Rust `1.98.1`, from `rust-toolchain.toml`. Version `1.98.0` is excluded because of a
-miscompilation in vtable generation that 1.98.1 fixes.
+miscompilation in vtable generation fixed in [Rust 1.98.1](https://blog.rust-lang.org/releases/1.98.1/).
 
 ## Running the checks locally
 
