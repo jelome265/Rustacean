@@ -1,6 +1,6 @@
 # Rust Topic Coverage Matrix
 
-Every topic below is mandatory scope. A topic is "covered" when at least one rule exists **and** an enforcement mechanism is named. Skill codes:
+Every topic below is mandatory review scope for enterprise Rust guidance. This means each topic must be considered and mapped to a rule/enforcement mechanism where applicable; it does **not** mean every language feature must be used in every codebase. Record a REQUIRED, USED, NOT APPLICABLE, or DEFERRED disposition with a brief reason for material topics. A topic is covered when at least one rule exists and an enforcement mechanism is named. Skill codes:
 
 - **BP** = rust-enterprise-best-practices (normative rules)
 - **IMP** = rust-enterprise-implement (build procedure)
