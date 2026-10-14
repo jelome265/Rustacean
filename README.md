@@ -24,6 +24,21 @@
 
 ## Quick install
 
+### Option A: Claude Code plugin (recommended for Claude Code)
+
+Requires a Claude Code version with the `claude plugin` commands (tested with 2.1.299). Run these in your shell:
+
+```bash
+claude plugin marketplace add jelome265/Rustacean
+claude plugin install rustacean@rustacean
+```
+
+Verify with `claude plugin details rustacean`. The output should list five skills. Updates arrive when the plugin `version` changes.
+
+Use `claude plugin marketplace add /path/to/local/Rustacean` to install from a clone instead.
+
+### Option B: Installer for any supported agent
+
 Rustacean installs five cooperating agent skills into the discovery directory of your coding agent. Requirements: **Git** and **Python 3**.
 
 ```bash
