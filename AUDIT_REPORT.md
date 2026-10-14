@@ -120,13 +120,21 @@ Rust async uses Future, async/await and an executor/runtime; JavaScript Promise 
 
 Rust async reference: https://rust-lang.github.io/async-book/part-guide/async-await.html
 
-### F-11 — Branch protection is not verified
-**Severity:** Major for merge governance  
-**Status:** Owner action.
+### F-11 — Required checks are not enforced by the active ruleset
+**Severity:** High for merge governance  
+**Status:** Confirmed by read-only API inspection after this audit's first revision. Owner action required.
 
-CONTRIBUTING.md enumerates required status checks and says branch protection enforces them. The branch protection API returned 403, so this audit cannot independently confirm required checks are enabled.
+Correction: the first revision of this report stated that branch protection returned HTTP 403 and could not be verified. A later read-only check with a repository-scoped token returned:
 
-**Recommendation:** owner confirms required checks (including Rust CodeQL and Cargo audit), dismiss-stale-review policy, code-owner approval, force-push/deletion restrictions and bypass permissions in GitHub settings.
+- Classic branch protection on `main`: HTTP 404, "Branch not protected".
+- Repository rulesets: HTTP 200. One active ruleset, `Main`, targets the default branch.
+- `Main` requires one approving review, but `require_code_owner_review` is `false`, so CODEOWNERS is not enforced.
+- `Main` `required_status_checks` is an empty list. **No CI check is required to merge.** PR #1 merged with its checks passing, but the ruleset would have allowed a merge with failing or missing checks.
+- `Main` allows bypass by the repository admin role (`actor_id` 5, `bypass_mode: always`).
+- `Main` requires `non_fast_forward` protection, so force pushes to the default branch are blocked.
+- Code scanning default setup is `not-configured`, so the advanced CodeQL workflow is the only scanner and there is no conflicting default setup.
+
+**Remediation (owner decision, not applied by this PR):** add the check names from CONTRIBUTING.md to the `Main` ruleset as required status checks, and set `require_code_owner_review` to `true`. Restrict or remove the admin bypass unless break-glass access is documented. Verify the change by opening a test pull request whose checks fail, and confirming that it cannot merge.
 
 ## Changes included in this PR
 
@@ -141,10 +149,10 @@ CONTRIBUTING.md enumerates required status checks and says branch protection enf
 ## Verification and limitations
 
 - Remote source/config inspection: completed using the connected GitHub interface.
-- Local git clone: attempted; failed because the environment could not resolve github.com.
+- Local git clone: attempted in the audit environment and failed because that environment could not resolve github.com. A later environment cloned the repository successfully, so this limit belongs to the audit environment only.
 - Local Python tests, Rust tests, formatting, Clippy, shell lint, CodeQL, cargo audit: NOT RUN during the audit.
 - CI for the PR changes: pending until the actual PR head workflows complete.
-- Branch protection/rulesets: UNVERIFIED because the API returned 403.
+- Branch protection/rulesets: verified by read-only API inspection after the first revision (see F-11). The first revision's HTTP 403 result did not reproduce with a repository-scoped token.
 - Runtime integration: not applicable to this repository's skill/conformance scope; it is not a deployed service.
 
 ## Primary references
