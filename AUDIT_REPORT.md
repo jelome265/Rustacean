@@ -162,3 +162,48 @@ Correction: the first revision of this report stated that branch protection retu
 - Agent Skills best practices: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
 - Rust async book: https://rust-lang.github.io/async-book/part-guide/async-await.html
 - RustSec cargo-audit: https://github.com/rustsec/rustsec/tree/main/cargo-audit
+
+
+---
+
+## Documentation and governance reassessment — 2026-10-14
+
+This dated addendum updates findings from the original audited baseline. It does not rewrite
+the historical observations above; use this section for the current repository state verified
+during the documentation-completeness pass.
+
+### Status changes
+
+- **F-06 (issue templates): RESOLVED in the current tree.** Both
+  \`.github/ISSUE_TEMPLATE/bug_report.md\` and
+  \`.github/ISSUE_TEMPLATE/feature_request.md\` are present. Keep security vulnerability
+  reports private via \`SECURITY.md\`; public issue templates must not invite exploit details,
+  credentials, or customer data.
+- **F-11 (required checks and code-owner review): RESOLVED in current repository configuration.**
+  A fresh read of the active \`Main\` ruleset at
+  \`https://api.github.com/repos/jelome265/Rustacean/rulesets/25018492\` on 2026-10-14 showed
+  11 required status-check contexts: \`workflow-security\`, \`validate-skills\`,
+  \`python-tests\`, \`shell-lint\`, \`rust-conformance\`, \`secret-scan\`,
+  \`python-dependency-audit\`, \`rust-dependency-audit\`, \`analyze (python)\`,
+  \`analyze (actions)\`, and \`analyze (rust)\`. The same ruleset requires one approving review
+  and \`require_code_owner_review: true\`; it also forbids non-fast-forward updates and has a
+  CodeQL code-scanning rule. These are configuration findings, not a claim that any particular
+  PR's checks passed.
+- **Installer discovery evidence: UPDATED, still runtime-unverified.** The install registry and
+  research matrix now use current official paths for Cursor, VS Code/Copilot, Antigravity and
+  Z.AI ZCode, and retain an explicit conflict warning for Kimi. Codex official sources continue
+  to disagree about a user skill creation/discovery path. No agent runtime was installed and
+  exercised as part of this review; successful file installation is not proof of discovery or
+  compliance.
+- **Documentation consistency: IN PROGRESS until CI and PR review complete.** The repository
+  contains a maintained documentation index, updated agent-path matrix, installation table,
+  and clearer source-of-truth distinctions between normative rules, automated gates, current
+  repository configuration, and observed test results. All changes remain reviewable in a PR.
+
+### Evidence boundary for this reassessment
+
+The active ruleset was inspected through the GitHub REST read-only endpoint on 2026-10-14.
+Agent destination paths were checked against vendor documentation, but no Codex, Cursor,
+Copilot, Gemini, Antigravity, Kimi, ZCode, Muse, Freebuff, Zed or Claude runtime was launched
+to confirm live discovery. Tests and CI must be evaluated against the latest commit under
+review; results from an earlier commit are not evidence for later changes.
