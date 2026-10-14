@@ -93,12 +93,26 @@ class InstallSkillsTest(unittest.TestCase):
         code, out = self.run_cli()
         self.assertEqual(code, 2, out)
 
-    def test_zcode_is_refused_because_no_skill_path_is_documented(self):
-        code, out = self.run_cli("--agent", "zcode", "--scope", "project", "--project-root", str(self.project), "--apply")
-        self.assertEqual(code, 1, out)
-        self.assertIn("REFUSED", out)
-        self.assertIn("no documented skill directory", out)
-        self.assertFalse((self.project / ".zcode").exists())
+    def test_zcode_installs_to_official_project_skill_directory(self):
+        code, out = self.run_cli("--agent", "zcode", "--scope", "project",
+                                 "--project-root", str(self.project), "--apply")
+        self.assertEqual(code, 0, out)
+        dest = self.project / ".zcode" / "skills"
+        for name in SUITE:
+            self.assertTrue((dest / name / "SKILL.md").is_file(), name)
+        self.assertIn("INSTALLED AND VERIFIED", out)
+
+    def test_shared_official_paths_are_the_default_for_compatible_agents(self):
+        installer = load_installer()
+        targets = installer.load_targets()
+        for agent in ("codex", "opencode", "gemini-cli", "zed", "cursor", "copilot", "kimi"):
+            with self.subTest(agent=agent):
+                self.assertEqual(targets[agent]["scope"]["project"][0], ".agents/skills")
+                self.assertEqual(targets[agent]["scope"]["user"][0], ".agents/skills")
+        self.assertEqual(targets["antigravity"]["scope"]["project"][0], ".agents/skills")
+        self.assertEqual(targets["antigravity"]["scope"]["user"][0], ".gemini/config/skills")
+        self.assertEqual(targets["zcode"]["scope"]["project"][0], ".zcode/skills")
+        self.assertEqual(targets["zcode"]["scope"]["user"][0], ".zcode/skills")
 
     def test_conflicting_target_is_refused_without_explicit_acceptance(self):
         code, out = self.run_cli("--agent", "kimi", "--scope", "project", "--project-root", str(self.project), "--apply")
