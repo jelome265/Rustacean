@@ -46,10 +46,19 @@ location is the most widely shared alongside `.agents/skills`.
 - Source: https://developers.openai.com/codex/skills (build-skills page, retrieved in English,
   French and Portuguese versions; the paths match)
 
-**Conflict and correction.** Several blog posts say Codex reads `~/.codex/skills/` and
-`AGENTS.md`. Those are from an earlier experimental build (a 2025 prototype in
-`core-agent-ide` docs). The current official docs do not use them. The installer does not
-target `~/.codex/skills`. `AGENTS.md` is a separate instruction file and is not a skill.
+**Important source discrepancy.** The current Codex skills overview documents
+`.agents/skills` for repository discovery, `$HOME/.agents/skills` for user discovery,
+and `/etc/codex/skills` for administrator discovery:
+https://developers.openai.com/codex/skills
+
+However, the official `openai/codex` skill-creator sample still recommends creating skills
+under `$CODEX_HOME/skills`, defaulting to `~/.codex/skills` when that variable is unset:
+https://github.com/openai/codex/blob/main/codex-rs/skills/src/assets/samples/skill-creator/SKILL.md
+
+These official sources disagree about the destination to use. This installer follows the
+current skills overview's documented discovery locations, but we must not claim that
+`~/.codex/skills` is universally unused. Verify discovery in the installed Codex version
+after installing. `AGENTS.md` remains a separate repository-instruction file, not a skill.
 
 ### OpenCode: official
 
