@@ -19,7 +19,8 @@ These job names must pass before a merge is possible:
 - `security / dependency-review`
 - `security / secret-scan`
 - `security / python-dependency-audit`
-- `codeql / analyze (python)` and `codeql / analyze (actions)`
+- `security / rust-dependency-audit`
+- `codeql / analyze (python)`, `codeql / analyze (actions)`, and `codeql / analyze (rust)`
 
 Branch protection that enforces these is configured in the repository settings. The
 settings are part of the governance record; a change to them is announced to the owner.
