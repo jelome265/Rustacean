@@ -24,7 +24,12 @@ This repository contains:
 Rust `1.98.1`, from `rust-toolchain.toml`. Version `1.98.0` is excluded because of a
 miscompilation in vtable generation fixed in [Rust 1.98.1](https://blog.rust-lang.org/releases/1.98.1/).
 
-## Running the checks locally
+## Core local checks
+
+These commands cover the core source, Rust, and Python checks; they are not a substitute for
+all hosted CI jobs. CI additionally runs workflow-security linting, shell lint, secret scanning,
+Python and Rust dependency audits, pull-request dependency review, and CodeQL. See the
+[documentation index](docs/README.md) and `.github/workflows/` for the current check definitions.
 
 ```bash
 python3 -m pip install -r requirements-ci.txt
