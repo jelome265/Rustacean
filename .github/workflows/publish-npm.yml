@@ -1,0 +1,88 @@
+# Manual or tag-triggered publish of rustacean-skills to npm.
+#
+# Authentication: uses the NPM_TOKEN repository secret (granular, publish-only,
+# expiring token). Plan: after the first successful publish, switch to npm
+# trusted publishing (OIDC) and delete the NPM_TOKEN secret. Note that the
+# setup-node step below writes an .npmrc that reads NODE_AUTH_TOKEN; remove
+# that step and the NODE_AUTH_TOKEN env when migrating, or OIDC will not run.
+#
+# Security properties:
+#   * Default permissions are empty; the publish job gets id-token: write only.
+#   * Runs only on manual dispatch or a v* tag from this repository. No
+#     pull_request_target trigger, so fork code never sees the secret.
+#   * Every action is pinned to a full commit SHA; checkout does not persist credentials.
+#   * The job uses the protected environment "npm-publish", so a required
+#     reviewer can approve each release.
+#   * Publish refuses to run if the version is already on npm or does not
+#     match the tag.
+name: publish-npm
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions: {}
+
+concurrency:
+  group: publish-npm
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: publish rustacean-skills
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: npm-publish
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false  # a publishing job must not restore caches
+
+      - name: Use npm that supports trusted publishing
+        run: |
+          npm install -g npm@11.5.1
+          npm --version
+
+      - name: Resolve version and check the tag
+        id: version
+        env:
+          REF_NAME: ${{ github.ref_name }}
+          REF_TYPE: ${{ github.ref_type }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          NAME=$(node -p "require('./package.json').name")
+          if [ "$REF_TYPE" = "tag" ] && [ "$REF_NAME" != "v$VERSION" ]; then
+            echo "Tag $REF_NAME does not match package.json version $VERSION" >&2
+            exit 1
+          fi
+          if npm view "$NAME@$VERSION" version >/dev/null 2>&1; then
+            echo "$NAME@$VERSION is already published; bump the version first." >&2
+            exit 1
+          fi
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Publishing $NAME@$VERSION"
+
+      - name: Run tests
+        run: npm test
+
+      - name: Inspect package contents
+        run: npm pack --dry-run
+
+      - name: Publish with provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance
