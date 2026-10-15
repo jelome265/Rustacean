@@ -13,8 +13,9 @@
 #   * Every action is pinned to a full commit SHA; checkout does not persist credentials.
 #   * The job uses the protected environment "npm-publish", so a required
 #     reviewer can approve each release.
-#   * Publish refuses to run if the version is already on npm or does not
-#     match the tag.
+#   * Publish refuses to run unless version sources agree, CHANGELOG.md has a
+#     dated section for the version, the tag equals v<version>, and the
+#     version is not already on npm (see RELEASING.md).
 name: publish-npm
 
 on:
@@ -62,6 +63,17 @@ jobs:
           echo "npm $VERSION"
           test "$VERSION" = "12.2.0" || { echo "expected npm 12.2.0 from the lockfile" >&2; exit 1; }
 
+      - name: Check release policy (versions, changelog, tag)
+        env:
+          REF_NAME: ${{ github.ref_name }}
+          REF_TYPE: ${{ github.ref_type }}
+        run: |
+          if [ "$REF_TYPE" = "tag" ]; then
+            python3 tools/check_release.py --tag "$REF_NAME" --require-release
+          else
+            python3 tools/check_release.py --require-release
+          fi
+
       - name: Resolve version and check the tag
         id: version
         env:
@@ -70,10 +82,6 @@ jobs:
         run: |
           VERSION=$(node -p "require('./package.json').version")
           NAME=$(node -p "require('./package.json').name")
-          if [ "$REF_TYPE" = "tag" ] && [ "$REF_NAME" != "v$VERSION" ]; then
-            echo "Tag $REF_NAME does not match package.json version $VERSION" >&2
-            exit 1
-          fi
           if npm view "$NAME@$VERSION" version >/dev/null 2>&1; then
             echo "$NAME@$VERSION is already published; bump the version first." >&2
             exit 1
