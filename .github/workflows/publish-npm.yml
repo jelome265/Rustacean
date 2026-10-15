@@ -1,27 +1,34 @@
-# Manual or tag-triggered publish of rustacean-skills to npm.
+# Publish rustacean-skills to npm.
 #
-# Authentication: uses the NPM_TOKEN repository secret (granular, publish-only,
-# expiring token). Plan: after the first successful publish, switch to npm
-# trusted publishing (OIDC) and delete the NPM_TOKEN secret. Note that the
-# setup-node step below writes an .npmrc that reads NODE_AUTH_TOKEN; remove
-# that step and the NODE_AUTH_TOKEN env when migrating, or OIDC will not run.
+# Called by release.yml after release-please creates a release (tag = v<version>).
+# Can also be run manually from main for recovery (workflow_dispatch); a manual run
+# must not be used to publish a version that release-please did not produce.
+#
+# Authentication: the NPM_TOKEN secret in the npm-publish environment (granular,
+# publish-only, expiring). After the first release, switch to npm trusted publishing
+# (OIDC) and delete NPM_TOKEN; remove the setup-node registry step when doing so.
 #
 # Security properties:
 #   * Default permissions are empty; the publish job gets id-token: write only.
-#   * Runs only on manual dispatch or a v* tag from this repository. No
-#     pull_request_target trigger, so fork code never sees the secret.
-#   * Every action is pinned to a full commit SHA; checkout does not persist credentials.
-#   * The job uses the protected environment "npm-publish", so a required
-#     reviewer can approve each release.
-#   * Publish refuses to run if the version is already on npm or does not
-#     match the tag.
+#   * No tag or pull_request trigger. Fork code never sees the secret.
+#   * The job runs in the protected environment npm-publish: a required reviewer
+#     approves each publish.
+#   * Refuses to publish unless: the tag's commit is an ancestor of main and is the
+#     commit being built; version sources agree; CHANGELOG has a dated section for
+#     the version; the version is newer than the version on npm; and the npm lookup
+#     succeeded (an unreachable registry fails closed).
+#   * Every action is pinned to a full commit SHA. Checkout does not persist credentials.
 name: publish-npm
 
 on:
+  workflow_call:
+    inputs:
+      tag:
+        description: "Release tag created by release-please, for example v0.1.0. Empty for manual runs."
+        required: false
+        type: string
+        default: ""
   workflow_dispatch:
-  push:
-    tags:
-      - "v*"
 
 permissions: {}
 
@@ -43,6 +50,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0  # needed to prove the tag is on main
 
       - name: Set up Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -62,25 +70,60 @@ jobs:
           echo "npm $VERSION"
           test "$VERSION" = "12.2.0" || { echo "expected npm 12.2.0 from the lockfile" >&2; exit 1; }
 
-      - name: Resolve version and check the tag
-        id: version
+      - name: Verify the release commit is on main
         env:
-          REF_NAME: ${{ github.ref_name }}
-          REF_TYPE: ${{ github.ref_type }}
+          TAG: ${{ inputs.tag }}
+          REF_FULL: ${{ github.ref }}
         run: |
-          VERSION=$(node -p "require('./package.json').version")
+          set -euo pipefail
+          if [ "$REF_FULL" != "refs/heads/main" ]; then
+            echo "publish must run from main, not $REF_FULL" >&2
+            exit 1
+          fi
+          git fetch --no-tags origin "+refs/heads/main:refs/remotes/origin/main"
+          if [ -n "$TAG" ]; then
+            git fetch --no-tags origin "+refs/tags/$TAG:refs/tags/$TAG"
+            TAG_SHA=$(git rev-parse "refs/tags/$TAG^{commit}")
+            if ! git merge-base --is-ancestor "$TAG_SHA" refs/remotes/origin/main; then
+              echo "tag $TAG does not point at a commit on main" >&2
+              exit 1
+            fi
+            if [ "$(git rev-parse HEAD)" != "$TAG_SHA" ]; then
+              echo "checked-out commit is not the commit tagged $TAG" >&2
+              exit 1
+            fi
+            echo "tag $TAG is on main at $TAG_SHA"
+          fi
+
+      - name: Check release policy
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
           NAME=$(node -p "require('./package.json').name")
-          if [ "$REF_TYPE" = "tag" ] && [ "$REF_NAME" != "v$VERSION" ]; then
-            echo "Tag $REF_NAME does not match package.json version $VERSION" >&2
+          # Fail closed. Only a clean "not found" means unpublished. Any other failure
+          # (network, registry error) stops the release instead of skipping the check.
+          set +e
+          OUT=$(npm view "$NAME" version 2>&1)
+          RC=$?
+          set -e
+          if [ "$RC" -eq 0 ]; then
+            PUBLISHED="$OUT"
+          elif grep -q "E404" <<<"$OUT"; then
+            PUBLISHED=""
+          else
+            echo "npm registry lookup failed; not publishing:" >&2
+            echo "$OUT" >&2
             exit 1
           fi
-          if npm view "$NAME@$VERSION" version >/dev/null 2>&1; then
-            echo "$NAME@$VERSION is already published; bump the version first." >&2
-            exit 1
+          ARGS=(--require-release)
+          if [ -n "$PUBLISHED" ]; then
+            ARGS+=(--published "$PUBLISHED")
           fi
-          echo "name=$NAME" >> "$GITHUB_OUTPUT"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Publishing $NAME@$VERSION"
+          if [ -n "$TAG" ]; then
+            ARGS+=(--tag "$TAG")
+          fi
+          python3 tools/check_release.py "${ARGS[@]}"
 
       - name: Check tooling advisories against the allow-list
         run: |

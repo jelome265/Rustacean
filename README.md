@@ -282,6 +282,8 @@ Known enforcement limits are recorded in [AUDIT_REPORT.md](AUDIT_REPORT.md). Rep
 | [Documentation index](docs/README.md) | Which documents are normative and which are procedural |
 | [Audit report](AUDIT_REPORT.md) | Findings, enforcement limits, dated reassessments |
 | [Contributing](CONTRIBUTING.md) | Workflow, branch protection, required checks |
+| [Changelog](CHANGELOG.md) | Release history, Keep a Changelog format |
+| [Releasing](RELEASING.md) | Versioning rules, version sources, and the release procedure |
 | [Security policy](SECURITY.md) | Private vulnerability reporting |
 
 ---
