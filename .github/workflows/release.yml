@@ -1,14 +1,22 @@
-# Automated versioning and release.
+# Automated versioning and release, with publishing to npm.
 #
-# On every push to main, release-please reads the Conventional Commits since the last
-# release and opens (or updates) a release pull request that bumps the version in
-# Cargo.toml, package.json, and .claude-plugin/plugin.json, and writes CHANGELOG.md.
-# Merging that pull request creates the tag and the GitHub release, and then publishes
-# to npm through publish-npm.yml.
+# 1. release-please: on every push to main, it opens or updates a release pull request
+#    that bumps the version in Cargo.toml, package.json, .claude-plugin/plugin.json, and
+#    .release-please-manifest.json, and writes CHANGELOG.md from Conventional Commits.
+#    Merging that pull request creates the tag v<version> and the GitHub release.
+# 2. publish: runs only when release-please created a release. It publishes to npm
+#    from this workflow file, which is the file npm's trusted publisher is configured to
+#    trust. Do not move the publish step into a reusable workflow: npm validates the
+#    calling workflow's filename, and secrets from the npm-publish environment are not
+#    passed into a called workflow.
 #
-# RELEASE_TOKEN is a fine-grained personal access token (or GitHub App token). It must
-# be used instead of GITHUB_TOKEN, because pull requests opened by GITHUB_TOKEN do not
-# trigger required status checks, so the release pull request could never merge.
+# Authentication: npm trusted publishing (OIDC). The publish job has id-token: write and
+# no npm token. npm requires a trusted publisher for the package before this job can
+# publish; see RELEASING.md for the one-time setup.
+#
+# RELEASE_TOKEN is a fine-grained personal access token (or GitHub App token). It must be
+# used instead of GITHUB_TOKEN, because pull requests opened by GITHUB_TOKEN do not trigger
+# required status checks, so the release pull request could never merge.
 name: release
 
 on:
@@ -16,10 +24,6 @@ on:
     branches: [main]
 
 permissions: {}
-
-concurrency:
-  group: release-please
-  cancel-in-progress: false
 
 jobs:
   release-please:
@@ -42,12 +46,99 @@ jobs:
           manifest-file: .release-please-manifest.json
 
   publish:
-    name: publish
+    name: publish rustacean-skills
     needs: release-please
     if: needs.release-please.outputs.release_created == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: npm-publish
     permissions:
       contents: read
-      id-token: write
-    uses: ./.github/workflows/publish-npm.yml
-    with:
-      tag: ${{ needs.release-please.outputs.tag_name }}
+      id-token: write  # OIDC identity for npm trusted publishing and provenance
+    env:
+      TAG: ${{ needs.release-please.outputs.tag_name }}
+      REF_FULL: ${{ github.ref }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0  # needed to prove the tag is on main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22.22.2"
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false  # a publishing job must not restore caches
+
+      - name: Install pinned npm from lockfile
+        run: |
+          npm ci --prefix tools/npm-publish --ignore-scripts --no-audit --no-fund
+          echo "$GITHUB_WORKSPACE/tools/npm-publish/node_modules/.bin" >> "$GITHUB_PATH"
+
+      - name: Confirm npm version
+        run: |
+          VERSION=$(npm --version)
+          echo "npm $VERSION"
+          test "$VERSION" = "12.2.0" || { echo "expected npm 12.2.0 from the lockfile" >&2; exit 1; }
+
+      - name: Verify the release commit is on main
+        run: |
+          set -euo pipefail
+          if [ "$REF_FULL" != "refs/heads/main" ]; then
+            echo "publish must run from main, not $REF_FULL" >&2
+            exit 1
+          fi
+          git fetch --no-tags origin "+refs/heads/main:refs/remotes/origin/main"
+          git fetch --no-tags origin "+refs/tags/$TAG:refs/tags/$TAG"
+          TAG_SHA=$(git rev-parse "refs/tags/$TAG^{commit}")
+          if ! git merge-base --is-ancestor "$TAG_SHA" refs/remotes/origin/main; then
+            echo "tag $TAG does not point at a commit on main" >&2
+            exit 1
+          fi
+          if [ "$(git rev-parse HEAD)" != "$TAG_SHA" ]; then
+            echo "checked-out commit is not the commit tagged $TAG" >&2
+            exit 1
+          fi
+          echo "tag $TAG is on main at $TAG_SHA"
+
+      - name: Check release policy
+        run: |
+          set -euo pipefail
+          NAME=$(node -p "require('./package.json').name")
+          # Fail closed. Only a clean "not found" means unpublished. Any other failure
+          # (network, registry error) stops the release instead of skipping the check.
+          set +e
+          OUT=$(npm view "$NAME" version 2>&1)
+          RC=$?
+          set -e
+          if [ "$RC" -eq 0 ]; then
+            PUBLISHED="$OUT"
+          elif grep -q "E404" <<<"$OUT"; then
+            PUBLISHED=""
+          else
+            echo "npm registry lookup failed; not publishing:" >&2
+            echo "$OUT" >&2
+            exit 1
+          fi
+          ARGS=(--require-release --tag "$TAG")
+          if [ -n "$PUBLISHED" ]; then
+            ARGS+=(--published "$PUBLISHED")
+          fi
+          python3 tools/check_release.py "${ARGS[@]}"
+
+      - name: Check tooling advisories against the allow-list
+        run: |
+          npm audit --prefix tools/npm-publish --package-lock-only --json > npm-audit.json || true
+          python3 tools/check_npm_audit.py --audit-json npm-audit.json --allowlist tools/npm-publish/advisory-allowlist.json
+
+      - name: Run tests
+        run: npm test
+
+      - name: Inspect package contents
+        run: npm pack --dry-run
+
+      # No npm token: npm authenticates this job with its OIDC identity (trusted publishing).
+      - name: Publish with provenance
+        run: npm publish --access public --provenance

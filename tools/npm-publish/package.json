@@ -2,7 +2,7 @@
   "name": "rustacean-npm-publish-tooling",
   "version": "0.0.0",
   "private": true,
-  "description": "Pins the latest stable npm used by the publish-npm workflow. npm 12 bundles its own dependencies, so overrides cannot patch them; known advisories in bundled dependencies are recorded in advisory-allowlist.json with an expiry, not silently overridden.",
+  "description": "Pins the latest stable npm used by the release workflow's publish job. npm 12 bundles its own dependencies, so overrides cannot patch them; known advisories in bundled dependencies are recorded in advisory-allowlist.json with an expiry, not silently overridden.",
   "license": "Apache-2.0",
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0"

@@ -2,7 +2,7 @@
 
 Nobody edits version numbers or tags by hand. Releases are produced from
 Conventional Commits by [release-please](https://github.com/googleapis/release-please-action),
-and published by the `publish-npm` workflow. This document describes the flow and what
+and published to npm by the `publish` job in `release.yml`. This document describes the flow and what
 enforces each step. If this document and the automation disagree, fix both in the same
 pull request.
 
@@ -32,8 +32,8 @@ conform. A non-conforming subject fails the pull request.
    and adds a section to `CHANGELOG.md` generated from the commits.
 3. A maintainer reviews that pull request and merges it. The merge is the release decision.
 4. release-please creates the tag `vX.Y.Z` on the merge commit and a GitHub release.
-5. `publish-npm` starts. It waits for approval in the `npm-publish` environment, then publishes
-   to npm with provenance.
+5. The `publish` job in `release.yml` starts. It waits for approval in the `npm-publish` environment,
+   then publishes to npm using OIDC trusted publishing, which also records provenance. It uses no npm token.
 
 No step asks anyone to type a version number or create a tag.
 
@@ -43,13 +43,15 @@ Pull requests (`validate-skills` job):
 - Conventional Commit subjects on every non-merge commit (`tools/check_commits.py`).
 - Version sources agree and are valid SemVer; `CHANGELOG.md` is well formed (`tools/check_release.py`).
 
-Release pull request and publish (`publish-npm` job, after approval):
+Release pull request and publish (`publish` job in `release.yml`, after approval):
 - The tag's commit is an ancestor of `main`, and it is the commit being built.
 - The tag equals `v<version>`, and the changelog has a dated section for that version.
 - The version is strictly newer than every earlier release in the changelog.
 - The version is strictly newer than the version on npm. The npm lookup fails closed: a
   registry error stops the release. Only a clean "not found" counts as unpublished.
 - The `npm-publish` environment: a required reviewer approves each publish.
+- npm trusted publishing: npm accepts the publish only from `release.yml` in this repository, in the
+  `npm-publish` environment. No token exists to leak or to bypass this check.
 - Tooling advisories are checked against the time-limited allow-list.
 
 Repository rulesets:
@@ -79,18 +81,38 @@ Any change to that surface that breaks a user must use `feat!:` or a `BREAKING C
    `GITHUB_TOKEN` do not trigger required checks, so this token is required. Tokens expire; set a
    reminder to rotate. A GitHub App token is the longer-term replacement.
 2. **`npm-publish` environment** with a required reviewer (already configured).
-3. **`NPM_TOKEN` in the `npm-publish` environment** (already configured).
+3. **npm package and trusted publisher** (one-time; not yet done for `rustacean-skills`).
+   npm cannot configure trusted publishing for a package that does not exist, so the first version
+   is published by a person, interactively:
+   a. Open a GitHub Codespace on this repository, check out the tag: `git checkout v0.1.0`.
+   b. `npm login`, and complete the two-factor challenge in the browser.
+   c. `npm publish --access public`. This publish has no provenance; that is expected.
+   d. On npmjs.com, open `rustacean-skills` → Settings → Trusted publishing → add a GitHub Actions
+      publisher with exactly these values:
+      - Organization or user: `jelome265`
+      - Repository: `Rustacean`
+      - Workflow filename: `release.yml`
+      - Environment name: `npm-publish`
+      - Allowed actions: tick **npm publish**. Publishers created after 3 September 2026 default to
+        stage-only, and a stage-only publisher cannot publish with `npm publish`.
+   e. The publisher must complete its first successful publish within 2 days, or it expires. Release
+      the next version (see the next section) within that window.
+   f. After that publish succeeds, under Publishing access choose **Require two-factor authentication
+      and disallow tokens**, then delete the `NPM_TOKEN` secret from the `npm-publish` environment.
+      Also revoke the npm token it came from.
 
 ## What is still manual, and why
 
 - Approving and merging the release pull request. This is deliberate: it is the human decision to ship.
 - Approving the npm publish in the `npm-publish` environment. This is deliberate too.
-- Rotating `RELEASE_TOKEN` and `NPM_TOKEN`.
+- Rotating `RELEASE_TOKEN`. `NPM_TOKEN` is retired once trusted publishing works.
 
 ## Recovery
 
 - If a publish fails before npm accepts the version, fix the cause and re-run the failed job
   from the Actions tab. The version stays the same.
 - If npm has accepted a version, it cannot be reused. Ship a new release.
-- `publish-npm` can also be run manually from `main` (workflow dispatch). It goes through the same checks
-  and approval, so it cannot publish a version that the release pull request did not produce.
+- To retry a publish, re-run the failed `publish` job in the release run. It rebuilds from the same
+  commit and tag, so it cannot publish anything other than the released version. There is no separate
+  manual publish workflow; a manual publish outside this path bypasses the trusted publisher and the
+  release checks.
