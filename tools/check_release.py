@@ -32,9 +32,11 @@ SEMVER = re.compile(
     r"(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?"
     r"(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$"
 )
-# release-please writes "## [0.2.0](compare-url) (2026-10-20)".
-# Hand-written sections may use "## [0.2.0] - 2026-10-20". Both are accepted.
-HEADING_RP = re.compile(r"^## \[([^\]]+)\]\([^)]*\) \((\d{4}-\d{2}-\d{2})\)\s*$")
+# release-please writes "## 0.2.0 (2026-10-20)" (the dry run shows this form), and a
+# linked form "## [0.2.0](compare-url) (2026-10-20)" when configured. The Keep a Changelog
+# form "## [0.2.0] - 2026-10-20" is also accepted. "## [Unreleased]" is optional.
+HEADING_PLAIN = re.compile(r"^## ([0-9][^\s\[\]()]*) \((\d{4}-\d{2}-\d{2})\)\s*$")
+HEADING_LINKED = re.compile(r"^## \[([^\]]+)\]\([^)]*\) \((\d{4}-\d{2}-\d{2})\)\s*$")
 HEADING_KAC = re.compile(r"^## \[([^\]]+)\](?: - (\S+))?\s*$")
 
 
@@ -83,14 +85,15 @@ def version_key(version: str) -> tuple[int, int, int, int]:
 
 
 def _parse_heading(line: str) -> tuple[str, str | None] | None:
-    if not line.startswith("## ["):
+    if not line.startswith("## "):
         return None
-    match = HEADING_RP.match(line) or HEADING_KAC.match(line)
-    if match is None:
-        raise ReleaseError(f"unrecognised changelog heading: {line!r}")
-    label = match.group(1)
-    date = match.group(2) if match.re.groups >= 2 else None
-    return label, date
+    for pattern in (HEADING_PLAIN, HEADING_LINKED, HEADING_KAC):
+        match = pattern.match(line)
+        if match is not None:
+            label = match.group(1)
+            date = match.group(2) if match.re.groups >= 2 else None
+            return label, date
+    raise ReleaseError(f"unrecognised changelog heading: {line!r}")
 
 
 def parse_changelog(root: Path) -> dict[str, str | None]:

@@ -25,11 +25,8 @@ def make_repo(version="0.1.0", npm=None, plugin=None, manifest=None, changelog=N
 
 
 def with_releases(version, releases):
-    """releases: list of (version, date) written in release-please's heading format."""
-    body = "".join(
-        f"\n## [{v}](https://github.com/x/y/compare/v0.0.0...v{v}) ({d})\n\n### Features\n\n* thing\n"
-        for v, d in releases
-    )
+    """releases: list of (version, date) in the heading format release-please writes: "## 0.1.0 (date)"."""
+    body = "".join(f"\n## {v} ({d})\n\n### Features\n\n* thing\n" for v, d in releases)
     return make_repo(version=version, changelog="# Changelog\n" + body)
 
 
@@ -65,6 +62,20 @@ class ChangelogFormat(unittest.TestCase):
     def test_release_please_heading_is_parsed(self):
         d = with_releases("0.2.0", [("0.2.0", "2026-10-20"), ("0.1.0", "2026-10-15")])
         self.assertEqual(cr.parse_changelog(d), {"0.2.0": "2026-10-20", "0.1.0": "2026-10-15"})
+
+    def test_linked_release_please_heading_is_parsed(self):
+        d = make_repo(changelog="## [0.0.9](https://x/compare/v0.0.8...v0.0.9) (2026-10-01)\n")
+        self.assertEqual(cr.parse_changelog(d), {"0.0.9": "2026-10-01"})
+
+    def test_mixed_formats_and_unreleased(self):
+        d = make_repo(changelog=(
+            "## 0.1.0 (2026-10-15)\n\n## [0.0.9](https://x/compare) (2026-10-01)\n\n"
+            "## [Unreleased]\n"))
+        self.assertEqual(cr.parse_changelog(d), {"0.1.0": "2026-10-15", "0.0.9": "2026-10-01", "Unreleased": None})
+
+    def test_plain_heading_does_not_swallow_linked_heading(self):
+        d = make_repo(changelog="## [0.0.9](https://x/compare) (2026-10-01)\n")
+        self.assertEqual(list(cr.parse_changelog(d)), ["0.0.9"])
 
     def test_keep_a_changelog_heading_is_parsed(self):
         d = make_repo(changelog="## [Unreleased]\n\n## [0.1.0] - 2026-10-15\n")

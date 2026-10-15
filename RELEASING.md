@@ -57,7 +57,7 @@ Repository rulesets:
 
 ## Version rules
 
-Rustacean is pre-1.0 (`0.x`). Under the table above, breaking changes and new features
+Rustacean is pre-1.0 (`0.x`). The first release is pinned to `0.1.0` by `initial-version` in `release-please-config.json`, because release-please otherwise starts a project at `1.0.0`. Later releases follow the bump rules below. Under the table above, breaking changes and new features
 bump the minor version, and fixes bump the patch version. Once the public surface is stable,
 the project moves to 1.0.0 by a deliberate pull request that changes the release configuration.
 
