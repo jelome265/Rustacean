@@ -2,7 +2,7 @@
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "rustacean",
   "displayName": "Rustacean",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "Enterprise Rust engineering skills: rulebook, implementation, hardening, read-only audit, and framework controls.",
   "author": {
     "name": "jelome265",
@@ -11,5 +11,12 @@
   "homepage": "https://github.com/jelome265/Rustacean",
   "repository": "https://github.com/jelome265/Rustacean",
   "license": "Apache-2.0",
-  "keywords": ["rust", "security", "audit", "hardening", "enterprise", "skills"]
+  "keywords": [
+    "rust",
+    "security",
+    "audit",
+    "hardening",
+    "enterprise",
+    "skills"
+  ]
 }

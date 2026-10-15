@@ -1,0 +1,53 @@
+# Automated versioning and release.
+#
+# On every push to main, release-please reads the Conventional Commits since the last
+# release and opens (or updates) a release pull request that bumps the version in
+# Cargo.toml, package.json, and .claude-plugin/plugin.json, and writes CHANGELOG.md.
+# Merging that pull request creates the tag and the GitHub release, and then publishes
+# to npm through publish-npm.yml.
+#
+# RELEASE_TOKEN is a fine-grained personal access token (or GitHub App token). It must
+# be used instead of GITHUB_TOKEN, because pull requests opened by GITHUB_TOKEN do not
+# trigger required status checks, so the release pull request could never merge.
+name: release
+
+on:
+  push:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: release-please
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    name: release-please
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - name: Create or update the release pull request
+        id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          token: ${{ secrets.RELEASE_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  publish:
+    name: publish
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/publish-npm.yml
+    with:
+      tag: ${{ needs.release-please.outputs.tag_name }}
