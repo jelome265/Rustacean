@@ -220,20 +220,25 @@
     {
       "agent": "zcode",
       "label": "Z.AI ZCode",
-      "evidence": "official",
+      "evidence": "conflicting",
       "scope": {
         "project": [
-          ".zcode/skills"
+          ".zcode/skills",
+          ".claude/skills"
         ],
         "user": [
-          ".zcode/skills"
+          ".zcode/skills",
+          ".claude/skills"
         ]
       },
       "sources": [
-        "https://zcode.z.ai/en/docs/skill",
-        "https://zcode.z.ai/en/docs/qa"
+        "https://zcode.z.ai/en/docs/skill (cited; could not be retrieved during the 2026-10-14 check)",
+        "https://zcode.z.ai/en/docs/qa (cited; could not be retrieved)",
+        "https://github.com/dev-skills (third-party: ZCode reads a .zcode-plugin manifest and the Claude plugin format)",
+        "https://pypi.org/project/drogon-claude-plugin/0.2.0/ (third-party: ZCode reads the standard Claude plugin format)",
+        "https://github.com/LightDevCoder/agent-config (third-party: ZCode config at .zcode/config.json and ~/.zcode/cli/config.json)"
       ],
-      "notes": "Current official ZCode docs document .zcode/skills at workspace scope and ~/.zcode/skills at user scope, plus importing skills from other agents. This entry covers Z.AI ZCode; it is unrelated to the open-source simonyos/Z-CODE project."
+      "notes": "CONFLICTING. The cited zcode.z.ai skill page could not be retrieved, so the .zcode/skills path it names is unconfirmed. Third-party sources point to Claude-compatible locations (.claude/skills, and the Claude plugin format) and to a .zcode-plugin manifest. .zcode/skills is also the path of the unrelated open-source simonyos/Z-CODE project. The installer uses .zcode/skills first and refuses the target unless --accept-conflicting is given. Confirm discovery on your installed version: ask ZCode to list its skills, or use --dest-dir."
     }
   ]
 }

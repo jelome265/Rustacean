@@ -96,7 +96,7 @@ Project scope is the default. Use `--scope user` for every project on the machin
 | Google Antigravity | `antigravity` | `.agents/skills/` | `~/.gemini/config/skills/` | Official, CLI differs |
 | Cursor | `cursor` | `.agents/skills/` | `~/.agents/skills/` | Official |
 | GitHub Copilot (VS Code) | `copilot` | `.agents/skills/` | `~/.agents/skills/` | Official |
-| Z.AI ZCode | `zcode` | `.zcode/skills/` | `~/.zcode/skills/` | Official |
+| Z.AI ZCode | `zcode` | `.zcode/skills/` | `~/.zcode/skills/` | Conflicting, requires `--accept-conflicting` |
 | Freebuff (Codebuff) | `freebuff` | `.agents/skills/` | `~/.agents/skills/` | Third-party, not runtime-verified |
 | Meta Muse Code | `muse` | `.agents/skills/` | `~/.agents/skills/` | Third-party, not runtime-verified |
 | Kimi Code CLI | `kimi` | `.agents/skills/` | `~/.agents/skills/` | Conflicting, requires `--accept-conflicting` |
@@ -134,8 +134,8 @@ python3 tools/install_skills.py --agent cursor --project-root "$PROJECT" --apply
 # GitHub Copilot (VS Code agent)
 python3 tools/install_skills.py --agent copilot --project-root "$PROJECT" --apply
 
-# Z.AI ZCode
-python3 tools/install_skills.py --agent zcode --project-root "$PROJECT" --apply
+# Z.AI ZCode (documentation conflicts; confirm discovery on your installed version)
+python3 tools/install_skills.py --agent zcode --project-root "$PROJECT" --accept-conflicting --apply
 
 # Freebuff (Codebuff)
 python3 tools/install_skills.py --agent freebuff --project-root "$PROJECT" --apply

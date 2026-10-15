@@ -167,15 +167,24 @@ after installing. `AGENTS.md` remains a separate repository-instruction file, no
   `--dest-dir` is supplied after verifying the installed version.
 - Third-party claims about `.claude/skills/` were not confirmed.
 
-### Z.AI ZCode: official
+### Z.AI ZCode: conflicting
 
-- Project: `.zcode/skills/<skill-name>/SKILL.md`
-- User: `~/.zcode/skills/<skill-name>/SKILL.md`
-- Sources: https://zcode.z.ai/en/docs/skill and https://zcode.z.ai/en/docs/qa
-- Current official documentation describes a Skills manager and importing skills from external
-  agents, and the FAQ confirms both project and user locations. The registry now installs to
-  these documented paths. Runtime discovery remains unverified in this repository.
-- This entry covers Z.AI ZCode, not unrelated projects with similar names.
+- Cited vendor pages: https://zcode.z.ai/en/docs/skill and https://zcode.z.ai/en/docs/qa.
+  Neither could be retrieved during the 2026-10-14 check, so the paths they are cited for
+  are unconfirmed. The registry does not grade this entry as official.
+- Candidate project paths: `.zcode/skills/<name>/SKILL.md` (cited vendor page; also the path of
+  the unrelated open-source project simonyos/Z-CODE) and `.claude/skills/<name>/SKILL.md`
+  (third-party sources say ZCode reads the Claude plugin format and skill location).
+- Candidate user paths: `~/.zcode/skills/<name>/SKILL.md` (a third-party Chinese-language guide)
+  and `~/.claude/skills/` (third-party).
+- Other third-party evidence: a `dev-skills` package ships a `.zcode-plugin/` manifest alongside
+  `.claude-plugin/`. The `agent-config` project lists ZCode config at `.zcode/config.json` and
+  `~/.zcode/cli/config.json`. These support a Claude-compatible plugin model, not a specific
+  skill directory.
+- The installer refuses this target unless `--accept-conflicting` is given. Confirm discovery on
+  your installed version before relying on it. Ask ZCode to list its skills, or use `--dest-dir`.
+- **Not the same product.** `simonyos/Z-CODE` is an unrelated open-source terminal agent. Do not use
+  its paths for Z.AI ZCode without confirming them.
 
 ## Tools that generate guidance files rather than reading SKILL.md
 
@@ -213,5 +222,5 @@ none. Each agent's own documentation was not checked.
   bypassing the installer's conflict guard.
 - Retrieve the official Muse Code skills reference; the paths remain third-party evidence.
 - Verify Antigravity app/IDE and CLI user-level paths separately in running installations.
-- Capture a ZCode import/discovery run and verify that its installed version reads the documented
-  `.zcode/skills` locations.
+- Capture a ZCode import/discovery run and verify that its installed version reads the cited
+  `.zcode/skills` locations, and that `.claude/skills` is or is not also read.

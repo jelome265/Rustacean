@@ -64,7 +64,7 @@ questions, is in `docs/agent-skill-install-matrix.md`.
 | Freebuff | `freebuff` | `.agents/skills` | `~/.agents/skills` | third-party |
 | Meta Muse Code | `muse` | `.agents/skills` | `~/.agents/skills` | third-party |
 | Kimi Code CLI | `kimi` | `.agents/skills` | `~/.agents/skills` | conflicting* |
-| Z.AI ZCode | `zcode` | `.zcode/skills` | `~/.zcode/skills` | official |
+| Z.AI ZCode | `zcode` | `.zcode/skills` | `~/.zcode/skills` | conflicting |
 
 The installer selects the **first** path listed in the registry for each scope; the matrix
 documents alternatives but the installer does not auto-detect or fall back between them.
