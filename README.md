@@ -9,6 +9,8 @@
 [![Security](https://img.shields.io/github/actions/workflow/status/jelome265/Rustacean/security.yml?branch=main&style=flat-square&label=Security)](https://github.com/jelome265/Rustacean/actions/workflows/security.yml)
 [![OpenSSF Scorecard](https://img.shields.io/github/actions/workflow/status/jelome265/Rustacean/scorecard.yml?branch=main&style=flat-square&label=Scorecard)](https://github.com/jelome265/Rustacean/actions/workflows/scorecard.yml)
 [![License](https://img.shields.io/github/license/jelome265/Rustacean?style=flat-square)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/jelome265/Rustacean?style=flat-square&label=release)](https://github.com/jelome265/Rustacean/releases)
+[![npm](https://img.shields.io/npm/v/rustacean-skills?style=flat-square&logo=npm&label=npm)](https://www.npmjs.com/package/rustacean-skills)
 
 ![Rust toolchain](https://img.shields.io/badge/Rust-1.98.1-CE422B?style=flat-square&logo=rust&logoColor=white)
 ![Edition](https://img.shields.io/badge/edition-2024-informational?style=flat-square)
