@@ -53,11 +53,28 @@ class ReleasePleaseConfig(unittest.TestCase):
 
 
 class ChangelogSource(unittest.TestCase):
-    def test_changelog_is_empty_before_the_first_release(self):
-        # With a non-empty file that has no release heading, release-please's updater turns
-        # the "# Changelog" title into "## Changelog" and places it below the new release.
-        # An empty file lets it write "# Changelog" and the release section correctly.
-        self.assertEqual((ROOT / "CHANGELOG.md").read_text(encoding="utf-8"), "")
+    """release-please rewrites CHANGELOG.md. Its input must be one of two valid shapes:
+    empty (before the first release), or the "# Changelog" title followed only by release
+    sections. Any other text is carried into the next release and corrupts it. For example,
+    a "# Changelog" title without a release heading is rewritten to "## Changelog".
+    """
+
+    RELEASE_HEADING = re.compile(r"^## \d+\.\d+\.\d+(-\S+)? \(\d{4}-\d{2}-\d{2}\)$")
+
+    def test_changelog_is_empty_or_title_plus_release_sections(self):
+        text = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+        if not text.strip():
+            return
+        lines = text.splitlines()
+        first = next(l for l in lines if l.strip())
+        self.assertEqual(first, "# Changelog", "CHANGELOG.md must start with the '# Changelog' title")
+        for line in lines:
+            if line.startswith("## "):
+                self.assertRegex(line, self.RELEASE_HEADING, f"unexpected level-2 heading: {line!r}")
+
+    def test_no_stray_level_two_changelog_heading(self):
+        text = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+        self.assertNotIn("## Changelog", text.splitlines())
 
 
 if __name__ == "__main__":
