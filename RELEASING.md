@@ -53,10 +53,28 @@ Plugin users receive updates only when `plugin.json` `version` changes, so a rel
 
 The publish workflow refuses to run if the version is already on npm, if the tag does not match, or if the changelog has no dated section for the version.
 
-## What is enforced, and what is not
+## What is enforced
 
-Enforced by CI on every pull request: version agreement, changelog format, and the changelog-touched rule for release-relevant paths.
+Enforced on every pull request, by the `validate-skills` job:
+- Cargo, npm, and plugin versions agree, and are valid SemVer.
+- `CHANGELOG.md` is well formed: an `[Unreleased]` section, dated releases, no duplicate versions.
+- A change to a release-relevant path also changes `CHANGELOG.md`.
+- The version is never lower than the newest dated release.
 
-Enforced at publish: tag equals version, dated changelog section present, version not already on npm, and the npm advisory check.
+Enforced when publishing, by the `publish-npm` workflow:
+- The tag is exactly `v<version>`.
+- `CHANGELOG.md` has a dated section for the version.
+- The version is strictly greater than every earlier dated release in the changelog.
+- The version is strictly greater than the version already on npm, if any.
+- The version is not already on npm.
+- The `npm-publish` environment approval and the npm advisory check.
 
-Not enforced yet: tag protection (tags can be created by anyone with write access), and a check that a new version is higher than the last released version. Those need a repository ruleset and a further change to the checker.
+Enforced by repository rulesets:
+- The `Main` ruleset requires the 11 status checks, one approving review, and code-owner review.
+- The `Release tags` ruleset (target: tags matching `v*`) blocks creation, update, deletion, and non-fast-forward changes for everyone except repository admins. Admins can create release tags, so the rule protects against accidental or unauthorised tags, not against an admin's own actions.
+
+## Known gaps
+
+- A tag ruleset cannot require that a tag points to a commit on `main`. The publish workflow runs on whatever commit the tag names. The maintainer step "tag the merge commit on `main`" is still manual.
+- Version ordering uses SemVer core numbers and treats any pre-release as lower than its release. It does not implement the full SemVer precedence rules for pre-release identifiers. Publish plain `X.Y.Z` versions.
+- Duplicate-version protection at publish depends on the npm registry lookup. If npm is unreachable, the lookup returns nothing and the check cannot see the published version. The publish step then depends on the registry's own rejection of duplicate versions.

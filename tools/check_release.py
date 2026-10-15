@@ -10,6 +10,10 @@ Checks, in order:
   4. --tag vX.Y.Z: the tag equals v<version>.
   5. --base <git-ref>: if release-relevant paths changed since <ref>, CHANGELOG.md
      must also change in the same range.
+  6. Version ordering: the current version is never lower than the newest dated
+     release in CHANGELOG.md. With --require-release it must be strictly newer
+     than every earlier dated release, and with --published <v> strictly newer
+     than the version already on npm.
 
 Standard library only. Exit 0 on pass, 1 on any violation, 2 on usage error.
 """
@@ -115,6 +119,40 @@ def check_release_entry(entries: dict[str, str | None], version: str) -> None:
         )
 
 
+def version_key(version: str) -> tuple[int, int, int, int]:
+    """Precedence key for SemVer core versions. A pre-release sorts below its release.
+
+    Pre-release identifiers are not compared with full SemVer precedence rules;
+    publish-time releases should therefore be plain X.Y.Z.
+    """
+    match = SEMVER.match(version)
+    if match is None:
+        raise ReleaseError(f"{version!r} is not valid SemVer")
+    major, minor, patch = (int(match.group(i)) for i in (1, 2, 3))
+    prerelease = "-" in version.split("+", 1)[0]
+    return (major, minor, patch, 0 if prerelease else 1)
+
+
+def check_not_behind(entries: dict[str, str | None], version: str) -> None:
+    dated = [v for v, d in entries.items() if d is not None]
+    if not dated:
+        return
+    newest = max(dated, key=version_key)
+    if version_key(version) < version_key(newest):
+        raise ReleaseError(
+            f"version {version} is lower than the released version {newest}; versions never go backwards"
+        )
+
+
+def check_strictly_newer(entries: dict[str, str | None], version: str, published: str | None) -> None:
+    prior = [v for v, d in entries.items() if d is not None and v != version]
+    for old in prior:
+        if version_key(version) <= version_key(old):
+            raise ReleaseError(f"version {version} must be greater than released version {old}")
+    if published is not None and version_key(version) <= version_key(published):
+        raise ReleaseError(f"version {version} must be greater than {published}, which is already on npm")
+
+
 def check_tag(tag: str, version: str) -> None:
     if tag != f"v{version}":
         raise ReleaseError(f"tag {tag!r} does not equal v{version}")
@@ -140,11 +178,14 @@ def check_changelog_touched(root: Path, base: str) -> None:
         )
 
 
-def run(root: Path, *, tag: str | None, require_release: bool, base: str | None) -> str:
+def run(root: Path, *, tag: str | None, require_release: bool, base: str | None,
+        published: str | None = None) -> str:
     version = check_versions_agree(read_versions(root))
     entries = parse_changelog(root)
+    check_not_behind(entries, version)
     if require_release or tag is not None:
         check_release_entry(entries, version)
+        check_strictly_newer(entries, version, published)
     if tag is not None:
         check_tag(tag, version)
     if base is not None:
@@ -159,9 +200,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--require-release", action="store_true",
                         help="require a dated CHANGELOG section for the current version")
     parser.add_argument("--base", help="git ref to diff against for the changelog-touched rule")
+    parser.add_argument("--published", help="version currently on npm, if any; the release must be newer")
     args = parser.parse_args(argv)
     try:
-        version = run(args.root, tag=args.tag, require_release=args.require_release, base=args.base)
+        version = run(args.root, tag=args.tag, require_release=args.require_release,
+                      base=args.base, published=args.published or None)
     except ReleaseError as exc:
         print(f"RELEASE CHECK FAILED: {exc}", file=sys.stderr)
         return 1

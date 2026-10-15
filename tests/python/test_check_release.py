@@ -136,6 +136,66 @@ class ChangelogTouched(unittest.TestCase):
         cr.run(d, tag=None, require_release=False, base="HEAD~1")
 
 
+class VersionOrdering(unittest.TestCase):
+    """Versions must increase. The release's own dated section is always present at release time."""
+
+    def repo_with(self, version, released):
+        sections = "".join(f"\n## [{v}] - {d}\n\n### Added\n- x\n" for v, d in released)
+        return make_repo(version=version, changelog=f"# Changelog\n\n## [Unreleased]\n{sections}")
+
+    def test_release_newer_than_prior_release_passes(self):
+        d = self.repo_with("0.2.0", [("0.2.0", "2026-10-20"), ("0.1.0", "2026-10-15")])
+        cr.run(d, tag=None, require_release=True, base=None)
+
+    def test_release_not_newer_than_prior_release_fails(self):
+        d = self.repo_with("0.1.0", [("0.1.0", "2026-10-20"), ("0.2.0", "2026-10-25")])
+        with self.assertRaisesRegex(cr.ReleaseError, "never go backwards"):
+            cr.run(d, tag=None, require_release=True, base=None)
+
+    def test_release_with_only_its_own_section_passes_without_npm_data(self):
+        d = self.repo_with("0.1.0", [("0.1.0", "2026-10-15")])
+        cr.run(d, tag=None, require_release=True, base=None)
+
+    def test_version_already_on_npm_fails(self):
+        d = self.repo_with("0.1.0", [("0.1.0", "2026-10-15")])
+        with self.assertRaisesRegex(cr.ReleaseError, "already on npm"):
+            cr.run(d, tag=None, require_release=True, base=None, published="0.1.0")
+
+    def test_version_older_than_npm_fails(self):
+        d = self.repo_with("0.1.0", [("0.1.0", "2026-10-15")])
+        with self.assertRaisesRegex(cr.ReleaseError, "already on npm"):
+            cr.run(d, tag=None, require_release=True, base=None, published="0.2.0")
+
+    def test_newer_than_npm_version_passes(self):
+        d = self.repo_with("0.2.0", [("0.2.0", "2026-10-20")])
+        cr.run(d, tag=None, require_release=True, base=None, published="0.1.0")
+
+    def test_feature_pr_at_released_version_passes(self):
+        d = self.repo_with("0.1.0", [("0.1.0", "2026-10-15")])
+        cr.run(d, tag=None, require_release=False, base=None)
+
+    def test_lower_than_newest_release_fails_on_every_run(self):
+        d = self.repo_with("0.1.0", [("0.2.0", "2026-10-15")])
+        with self.assertRaisesRegex(cr.ReleaseError, "never go backwards"):
+            cr.run(d, tag=None, require_release=False, base=None)
+
+    def test_prerelease_sorts_below_release(self):
+        d = self.repo_with("1.0.0", [("1.0.0", "2026-10-20"), ("1.0.0-rc.1", "2026-10-01")])
+        cr.run(d, tag=None, require_release=True, base=None)
+        d2 = self.repo_with("1.0.0-rc.1", [("1.0.0-rc.1", "2026-10-20"), ("1.0.0", "2026-10-01")])
+        with self.assertRaisesRegex(cr.ReleaseError, "never go backwards"):
+            cr.run(d2, tag=None, require_release=True, base=None)
+
+    def test_numeric_not_string_ordering(self):
+        d = self.repo_with("0.10.0", [("0.10.0", "2026-10-20"), ("0.9.0", "2026-10-01")])
+        cr.run(d, tag=None, require_release=True, base=None)
+
+    def test_cli_published_flag(self):
+        d = self.repo_with("0.1.0", [("0.1.0", "2026-10-15")])
+        self.assertEqual(cr.main(["--root", str(d), "--require-release", "--published", "0.1.0"]), 1)
+        self.assertEqual(cr.main(["--root", str(d), "--require-release", "--published", "0.0.9"]), 0)
+
+
 class RealRepository(unittest.TestCase):
     def test_current_repository_passes_release_checks(self):
         cr.run(ROOT, tag=None, require_release=False, base=None)

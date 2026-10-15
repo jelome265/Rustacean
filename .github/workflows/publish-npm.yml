@@ -63,16 +63,22 @@ jobs:
           echo "npm $VERSION"
           test "$VERSION" = "12.2.0" || { echo "expected npm 12.2.0 from the lockfile" >&2; exit 1; }
 
-      - name: Check release policy (versions, changelog, tag)
+      - name: Check release policy (versions, changelog, tag, ordering)
         env:
           REF_NAME: ${{ github.ref_name }}
           REF_TYPE: ${{ github.ref_type }}
         run: |
-          if [ "$REF_TYPE" = "tag" ]; then
-            python3 tools/check_release.py --tag "$REF_NAME" --require-release
-          else
-            python3 tools/check_release.py --require-release
+          NAME=$(node -p "require('./package.json').name")
+          # Latest version on npm, or empty if the package has never been published.
+          PUBLISHED=$(npm view "$NAME" version 2>/dev/null || true)
+          ARGS=(--require-release)
+          if [ -n "$PUBLISHED" ]; then
+            ARGS+=(--published "$PUBLISHED")
           fi
+          if [ "$REF_TYPE" = "tag" ]; then
+            ARGS+=(--tag "$REF_NAME")
+          fi
+          python3 tools/check_release.py "${ARGS[@]}"
 
       - name: Resolve version and check the tag
         id: version
