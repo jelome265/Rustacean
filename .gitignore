@@ -14,3 +14,6 @@ venv/
 
 # Local gate output
 *.sarif
+
+# Node
+node_modules/

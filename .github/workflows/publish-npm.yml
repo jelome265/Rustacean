@@ -37,7 +37,7 @@ jobs:
     environment: npm-publish
     permissions:
       contents: read
-      id-token: write
+      id-token: write  # OIDC identity for npm trusted publishing and provenance attestation
     steps:
       - name: Check out
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -47,14 +47,20 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: "22"
+          node-version: "22.22.2"
           registry-url: "https://registry.npmjs.org"
           package-manager-cache: false  # a publishing job must not restore caches
 
-      - name: Use npm that supports trusted publishing
+      - name: Install pinned npm from lockfile
         run: |
-          npm install -g npm@11.5.1
-          npm --version
+          npm ci --prefix tools/npm-publish --ignore-scripts --no-audit --no-fund
+          echo "$GITHUB_WORKSPACE/tools/npm-publish/node_modules/.bin" >> "$GITHUB_PATH"
+
+      - name: Confirm npm supports trusted publishing
+        run: |
+          VERSION=$(npm --version)
+          echo "npm $VERSION"
+          test "$VERSION" = "12.2.0" || { echo "expected npm 12.2.0 from the lockfile" >&2; exit 1; }
 
       - name: Resolve version and check the tag
         id: version
@@ -75,6 +81,11 @@ jobs:
           echo "name=$NAME" >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Publishing $NAME@$VERSION"
+
+      - name: Check tooling advisories against the allow-list
+        run: |
+          npm audit --prefix tools/npm-publish --package-lock-only --json > npm-audit.json || true
+          python3 tools/check_npm_audit.py --audit-json npm-audit.json --allowlist tools/npm-publish/advisory-allowlist.json
 
       - name: Run tests
         run: npm test

@@ -37,6 +37,10 @@ jobs:
         with:
           fail-on-severity: high
           comment-summary-in-pr: never
+          # Accepted exceptions for bundled npm 12.2.0 dependencies. Source of truth:
+          # tools/npm-publish/advisory-allowlist.json (owner, reason, expiry 2026-12-31).
+          # Remove an ID here when its entry is removed there.
+          allow-ghsas: GHSA-qhr7-859c-m2p7, GHSA-6j4f-fj2g-mc7p, GHSA-ch52-4w7c-c8xp, GHSA-rfgv-xxqx-mfg5
 
   secret-scan:
     name: secret-scan
@@ -56,6 +60,34 @@ jobs:
         uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
+  npm-tooling-audit:
+    name: npm-tooling-audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22.22.2"
+          package-manager-cache: false
+
+      - name: Install the lockfile-pinned npm tooling
+        run: npm ci --prefix tools/npm-publish --ignore-scripts --no-audit --no-fund
+
+      - name: Audit the tooling lockfile
+        run: |
+          # npm audit exits non-zero when advisories exist. The allow-list check below
+          # decides pass or fail, so the exit code is captured rather than trusted.
+          npm audit --prefix tools/npm-publish --package-lock-only --json > npm-audit.json || true
+          python3 tools/check_npm_audit.py --audit-json npm-audit.json --allowlist tools/npm-publish/advisory-allowlist.json
 
   python-dependency-audit:
     name: python-dependency-audit

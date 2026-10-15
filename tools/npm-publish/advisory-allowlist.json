@@ -1,0 +1,35 @@
+{
+  "_about": "Accepted advisories for the npm publish tooling. Each entry is a formal, time-limited exception (BP-DP-03). npm 12 bundles its own dependencies, so root-level overrides cannot patch them. Entries are read by tools/check_npm_audit.py and by the dependency-review step in security.yml. An entry past its expiry fails the check.",
+  "owner": "jelome265",
+  "review_by": "2026-12-31",
+  "exceptions": [
+    {
+      "ghsa": "GHSA-qhr7-859c-m2p7",
+      "package": "brace-expansion",
+      "severity": "high",
+      "reason": "brace-expansion: Bundled in npm 12.2.0, which is the latest stable npm. Npm 11.16 to 12.2 were all checked on 2026-10-15 and none is free of high-severity advisories in its bundled dependencies. Reachability within npm's publish path was NOT analysed in depth. The exception is accepted until expiry because the publish job runs only on manual dispatch or version tag, after environment approval, and never on pull requests.",
+      "expires": "2026-12-31"
+    },
+    {
+      "ghsa": "GHSA-6j4f-fj2g-mc7p",
+      "package": "brace-expansion",
+      "severity": "high",
+      "reason": "brace-expansion: Bundled in npm 12.2.0, which is the latest stable npm. Npm 11.16 to 12.2 were all checked on 2026-10-15 and none is free of high-severity advisories in its bundled dependencies. Reachability within npm's publish path was NOT analysed in depth. The exception is accepted until expiry because the publish job runs only on manual dispatch or version tag, after environment approval, and never on pull requests.",
+      "expires": "2026-12-31"
+    },
+    {
+      "ghsa": "GHSA-ch52-4w7c-c8xp",
+      "package": "http-cache-semantics",
+      "severity": "high",
+      "reason": "http-cache-semantics: Bundled in npm 12.2.0, which is the latest stable npm. Npm 11.16 to 12.2 were all checked on 2026-10-15 and none is free of high-severity advisories in its bundled dependencies. Reachability within npm's publish path was NOT analysed in depth. The exception is accepted until expiry because the publish job runs only on manual dispatch or version tag, after environment approval, and never on pull requests.",
+      "expires": "2026-12-31"
+    },
+    {
+      "ghsa": "GHSA-rfgv-xxqx-mfg5",
+      "package": "undici",
+      "severity": "high",
+      "reason": "undici: Bundled in npm 12.2.0, which is the latest stable npm. Npm 11.16 to 12.2 were all checked on 2026-10-15 and none is free of high-severity advisories in its bundled dependencies. Reachability within npm's publish path was NOT analysed in depth. The exception is accepted until expiry because the publish job runs only on manual dispatch or version tag, after environment approval, and never on pull requests.",
+      "expires": "2026-12-31"
+    }
+  ]
+}

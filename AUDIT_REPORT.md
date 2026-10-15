@@ -195,6 +195,7 @@ during the documentation-completeness pass.
   to disagree about a user skill creation/discovery path. No agent runtime was installed and
   exercised as part of this review; successful file installation is not proof of discovery or
   compliance.
+- **Correction (2026-10-14, after PR #8):** the statement above that Z.AI ZCode uses "current official paths" is withdrawn. The cited zcode.z.ai skill pages could not be retrieved, and third-party sources conflict with the `.zcode/skills` path. The registry now grades ZCode as `conflicting`, the installer refuses it without `--accept-conflicting`, and the README and installation guide say so. This correction does not change the statement that no agent runtime was exercised.
 - **Documentation consistency: IN PROGRESS until CI and PR review complete.** The repository
   contains a maintained documentation index, updated agent-path matrix, installation table,
   and clearer source-of-truth distinctions between normative rules, automated gates, current
