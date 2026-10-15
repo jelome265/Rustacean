@@ -25,7 +25,7 @@ class ReleasePleaseConfig(unittest.TestCase):
             self.assertTrue((ROOT / extra["path"]).is_file(), f"extra-file missing: {extra['path']}")
 
     def test_tags_are_bare_version_tags(self):
-        # publish-npm.yml requires the tag to equal v<version>, so no component prefix.
+        # The publish job requires the tag to equal v<version>, so no component prefix.
         self.assertEqual(PACKAGE.get("component"), "")
         self.assertIs(PACKAGE.get("include-component-in-tag"), False)
 
