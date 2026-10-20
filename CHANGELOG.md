@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.0](https://github.com/jelome265/Rustacean/compare/v0.1.0...v0.2.0) (2026-10-20)
+
+
+### Features
+
+* **release:** add manual recovery for existing tags ([b028b3d](https://github.com/jelome265/Rustacean/commit/b028b3d001c2ea817f460473457fcb89a063ea33))
+* **release:** add manual recovery for existing tags ([b5e758f](https://github.com/jelome265/Rustacean/commit/b5e758f493a41e56a5ddbb7f71f58610efe62adf))
+
+
+### Bug Fixes
+
+* **release:** prevent manual recovery from skipping publish ([2d16dbf](https://github.com/jelome265/Rustacean/commit/2d16dbf42c5e2f763bca24ca81ae451938a98e08))
+* **release:** publish from release.yml with OIDC trusted publishing ([80b87a8](https://github.com/jelome265/Rustacean/commit/80b87a8e3f10933d407507117e3f00216e173911))
+* **release:** publish from release.yml with OIDC, not a reusable workflow ([e4fbc80](https://github.com/jelome265/Rustacean/commit/e4fbc80519bce23702dcf201b7bc06a4422d532b))
+
 ## 0.1.0 (2026-10-15)
 
 
