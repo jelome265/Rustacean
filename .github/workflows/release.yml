@@ -4,15 +4,14 @@
 #    that bumps the version in Cargo.toml, package.json, .claude-plugin/plugin.json, and
 #    .release-please-manifest.json, and writes CHANGELOG.md from Conventional Commits.
 #    Merging that pull request creates the tag v<version> and the GitHub release.
-# 2. publish: runs only when release-please created a release. It publishes to npm
-#    from this workflow file, which is the file npm's trusted publisher is configured to
-#    trust. Do not move the publish step into a reusable workflow: npm validates the
-#    calling workflow's filename, and secrets from the npm-publish environment are not
-#    passed into a called workflow.
+# 2. publish: runs when release-please creates a release, or manually for an existing
+#    release tag to recover a failed publish without creating another release.
+#    This publish step stays in this file because npm trusted publishing validates the
+#    calling workflow's filename.
 #
 # Authentication: npm trusted publishing (OIDC). The publish job has id-token: write and
-# no npm token. npm requires a trusted publisher for the package before this job can
-# publish; see RELEASING.md for the one-time setup.
+# no npm token. npm requires a trusted publisher for this package and this workflow file;
+# see RELEASING.md for the one-time setup.
 #
 # RELEASE_TOKEN is a fine-grained personal access token (or GitHub App token). It must be
 # used instead of GITHUB_TOKEN, because pull requests opened by GITHUB_TOKEN do not trigger
@@ -22,11 +21,18 @@ name: release
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing release tag to publish, for example v0.1.0"
+        required: true
+        type: string
 
 permissions: {}
 
 jobs:
   release-please:
+    if: github.event_name == 'push'
     name: release-please
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -48,7 +54,7 @@ jobs:
   publish:
     name: publish rustacean-skills
     needs: release-please
-    if: needs.release-please.outputs.release_created == 'true'
+    if: always() && (needs.release-please.outputs.release_created == 'true' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     environment: npm-publish
@@ -56,12 +62,20 @@ jobs:
       contents: read
       id-token: write  # OIDC identity for npm trusted publishing and provenance
     env:
-      TAG: ${{ needs.release-please.outputs.tag_name }}
-      REF_FULL: ${{ github.ref }}
+      TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || needs.release-please.outputs.tag_name }}
     steps:
-      - name: Check out
+      - name: Validate requested tag
+        run: |
+          set -euo pipefail
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid release tag: $TAG" >&2
+            exit 1
+          fi
+
+      - name: Check out the exact release tag
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || needs.release-please.outputs.tag_name }}
           persist-credentials: false
           fetch-depth: 0  # needed to prove the tag is on main
 
@@ -86,10 +100,6 @@ jobs:
       - name: Verify the release commit is on main
         run: |
           set -euo pipefail
-          if [ "$REF_FULL" != "refs/heads/main" ]; then
-            echo "publish must run from main, not $REF_FULL" >&2
-            exit 1
-          fi
           git fetch --no-tags origin "+refs/heads/main:refs/remotes/origin/main"
           git fetch --no-tags origin "+refs/tags/$TAG:refs/tags/$TAG"
           TAG_SHA=$(git rev-parse "refs/tags/$TAG^{commit}")
