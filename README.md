@@ -18,7 +18,7 @@
 ![Agents](https://img.shields.io/badge/supported%20agents-12-informational?style=flat-square)
 ![Python](https://img.shields.io/badge/tools-Python%203-3776AB?style=flat-square&logo=python&logoColor=white)
 
-**[Quick install](#quick-install)** · **[Platforms](#install-on-each-platform)** · **[Verify](#verify-discovery)** · **[What's included](#whats-included)** · **[Local checks](#local-verification)** · **[Docs](#documentation)**
+**[Website](https://jelome265.github.io/Rustacean/)** · **[Quick install](#quick-install)** · **[Platforms](#install-on-each-platform)** · **[Verify](#verify-discovery)** · **[What's included](#whats-included)** · **[Local checks](#local-verification)** · **[Docs](#documentation)**
 
 </div>
 
