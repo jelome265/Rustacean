@@ -1,6 +1,6 @@
-"""Regression tests for release-please configuration. Run from the repository root:
+"""""Regression tests for release-please configuration. Run from the repository root:
 python3 -m unittest discover -s tests/python -v
-"""
+""""""
 import json
 import re
 import tomllib
@@ -35,7 +35,7 @@ class ReleasePleaseConfig(unittest.TestCase):
     def test_cargo_lock_filter_targets_the_workspace_crate(self):
         lock_entries = [e for e in PACKAGE["extra-files"] if e["path"] == "Cargo.lock"]
         self.assertEqual(len(lock_entries), 1, "Cargo.lock must be listed exactly once")
-        match = re.fullmatch(r"\$\.package\[\?\(@\.name\.value=='([^']+)'\)\]\.version", lock_entries[0]["jsonpath"])
+        match = re.fullmatch(r"\\$\\.package\\[\\?\\(@\\.name\\.value=='([^']+)'\\)\\]\\.version", lock_entries[0]["jsonpath"])
         self.assertIsNotNone(match, "Cargo.lock jsonpath must use the parsed-name form")
         crate = match.group(1)
         self.assertIn(crate, workspace_crate_names(), "filter must name a workspace crate")
@@ -59,7 +59,19 @@ class ChangelogSource(unittest.TestCase):
     a "# Changelog" title without a release heading is rewritten to "## Changelog".
     """
 
-    RELEASE_HEADING = re.compile(r"^## \d+\.\d+\.\d+(-\S+)? \(\d{4}-\d{2}-\d{2}\)$")
+    VERSION = r"\\d+\\.\\d+\\.\\d+(?:-\\S+)?"
+    RELEASE_HEADING = re.compile(
+        rf"^## (?:{VERSION}|\\[{VERSION}\\]\\([^)]+\\)) \\(\\d{{4}}-\\d{{2}}-\\d{{2}}\\)$"
+    )
+
+    def test_release_heading_accepts_plain_and_linked_formats(self):
+        headings = (
+            "## 0.1.0 (2026-10-15)",
+            "## [0.2.0](https://example.invalid/compare/v0.1.0...v0.2.0) (2026-10-20)",
+        )
+        for heading in headings:
+            with self.subTest(heading=heading):
+                self.assertRegex(heading, self.RELEASE_HEADING)
 
     def test_changelog_is_empty_or_title_plus_release_sections(self):
         text = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
