@@ -59,7 +59,19 @@ class ChangelogSource(unittest.TestCase):
     a "# Changelog" title without a release heading is rewritten to "## Changelog".
     """
 
-    RELEASE_HEADING = re.compile(r"^## \d+\.\d+\.\d+(-\S+)? \(\d{4}-\d{2}-\d{2}\)$")
+    VERSION = r"\d+\.\d+\.\d+(?:-\S+)?"
+    RELEASE_HEADING = re.compile(
+        rf"^## (?:{VERSION}|\[{VERSION}\]\([^)]+\)) \(\d{{4}}-\d{{2}}-\d{{2}}\)$"
+    )
+
+    def test_release_heading_accepts_plain_and_linked_formats(self):
+        headings = (
+            "## 0.1.0 (2026-10-15)",
+            "## [0.2.0](https://example.invalid/compare/v0.1.0...v0.2.0) (2026-10-20)",
+        )
+        for heading in headings:
+            with self.subTest(heading=heading):
+                self.assertRegex(heading, self.RELEASE_HEADING)
 
     def test_changelog_is_empty_or_title_plus_release_sections(self):
         text = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
