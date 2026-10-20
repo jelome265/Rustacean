@@ -61,7 +61,7 @@ class ChangelogSource(unittest.TestCase):
 
     VERSION = r"\d+\.\d+\.\d+(?:-\S+)?"
     RELEASE_HEADING = re.compile(
-        rf"^## (?:{VERSION}|\[{VERSION}\]\([^)]+\)) \(\d{4}-\d{2}-\d{2}\)$"
+        rf"^## (?:{VERSION}|\[{VERSION}\]\([^)]+\)) \(\d{{4}}-\d{{2}}-\d{{2}}\)$"
     )
 
     def test_release_heading_accepts_plain_and_linked_formats(self):
