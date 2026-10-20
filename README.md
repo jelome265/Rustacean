@@ -62,17 +62,21 @@ Replace `codex` with your agent's ID from the [platform table](#install-on-each-
 
 Exit codes: `0` success or dry run, `1` refused or verification failed, `2` usage error.
 
-### Alternative: npx (no clone required)
+### Option C: Install through npm
 
-Requires **Node.js 18+** and **Python 3**. The package bundles the installer and the five skills:
+Requires **Node.js 18+** and **Python 3**. The package bundles the installer and all five skills. From the project where you want to use Rustacean:
 
 ```bash
+npm i rustacean-skills
+
 npx rustacean-skills --list
-npx rustacean-skills --agent codex --project-root /path/to/your/project           # dry run
-npx rustacean-skills --agent codex --project-root /path/to/your/project --apply   # install and verify
+npx rustacean-skills --agent codex --project-root .          # dry run
+npx rustacean-skills --agent codex --project-root . --apply  # install and verify
 ```
 
-Every option in the installer applies. The launcher only locates Python 3 and forwards arguments and the exit code. Set `RUSTACEAN_PYTHON=/path/to/python3` to choose an interpreter.
+This adds `rustacean-skills` as a dependency of the current Node.js project. For a one-off run without adding a dependency, use `npx rustacean-skills` directly and pass the same arguments.
+
+Every installer option applies. The launcher locates Python 3 and forwards arguments and the exit code. Set `RUSTACEAN_PYTHON=/path/to/python3` to choose an interpreter.
 
 ---
 
