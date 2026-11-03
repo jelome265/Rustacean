@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <meta name="theme-color" content="#2c4a7b">
+  <meta name="theme-color" content="#b7410e">
   <meta name="description" content="Rustacean is a coordinated suite of five agent skills for disciplined, secure, production-ready Rust engineering.">
   <meta property="og:title" content="Rustacean — Rust rules you can check">
   <meta property="og:description" content="Five coordinated agent skills. Explicit rules. Checks you can verify.">
   <meta property="og:type" content="website">
   <title>Rustacean — Rust rules you can check</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%232c4a7b'/%3E%3Crect x='6' y='6' width='20' height='20' fill='%23e0b14a'/%3E%3C/svg%3E">
+  <link rel="icon" href="assets/brand/rust-logo-single-path.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/bricolage-grotesque-latin-standard-normal.woff2" as="font" type="font/woff2" crossorigin>
   <style>
     @font-face {
@@ -29,14 +29,19 @@
       --mill-2: #e2e6e1;
       --ink: #14171c;
       --ink-2: #252b33;
-      --temper: #2c4a7b;
-      --temper-deep: #213a63;
-      --paper: #eef2f5;
-      --temper-muted: #e3ebf6;
-      --straw: #e0b14a;
-      --code: #111a2b;
-      --code-text: #e9eef7;
-      --code-muted: #9fb0cc;
+      --paper: #ffffff;
+      --rust-50: #fdf1ec;
+      --rust-100: #fbdcd0;
+      --rust-200: #f8bba0;
+      --rust-300: #f39267;
+      --rust-400: #ef692f;
+      --rust-500: #b7410e;
+      --rust-600: #ab3d0d;
+      --rust-700: #89310b;
+      --rust-800: #682508;
+      --rust-900: #471905;
+      --code-text: #ffffff;
+      --code-muted: #e3e7ed;
       --max: 1240px;
       --gutter: clamp(20px, 4.2vw, 56px);
       --sans: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
@@ -53,13 +58,14 @@
     img, svg { display: block; max-width: 100%; }
     a { color: inherit; text-underline-offset: .22em; text-decoration-thickness: 1.5px; }
     :focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
-    .install :focus-visible, footer :focus-visible { outline-color: var(--straw); }
+    .install :focus-visible { outline-color: var(--rust-50); }
+    footer :focus-visible { outline-color: var(--rust-300); }
     code, pre { font-family: var(--mono); font-size: .9em; }
     h1, h2, h3, p { margin: 0; }
     ul, ol { margin: 0; padding: 0; list-style: none; }
     h1, h2, h3 { font-weight: 720; font-stretch: 88%; letter-spacing: -.03em; line-height: 1; }
 
-    .skip { position: absolute; left: 12px; top: -80px; z-index: 100; background: var(--straw); color: var(--ink); padding: 10px 14px; font-weight: 700; text-decoration: none; }
+    .skip { position: absolute; left: 12px; top: -80px; z-index: 100; background: var(--rust-300); color: var(--ink); padding: 10px 14px; font-weight: 700; text-decoration: none; }
     .skip:focus { top: 12px; }
     .wrap { width: min(var(--max), calc(100% - var(--gutter) * 2)); margin-inline: auto; }
 
@@ -67,39 +73,39 @@
     .site-head { background: var(--mill-2); }
     .nav { min-height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding: 12px 0; }
     .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 760; font-stretch: 88%; font-size: 20px; letter-spacing: -.02em; }
-    .brand-mark { width: 30px; height: 30px; background: var(--temper); position: relative; flex: none; }
-    .brand-mark::after { content: ""; position: absolute; inset: 7px; background: var(--straw); }
+    .brand-mark { width: 34px; height: 34px; flex: none; }
     .nav-links { display: flex; align-items: center; flex-wrap: wrap; gap: 2px; font-size: 17px; font-weight: 560; }
     .nav-links a { text-decoration: none; padding: 10px 12px; min-height: 44px; display: inline-flex; align-items: center; }
     .nav-links a:hover { text-decoration: underline; text-underline-offset: .25em; }
     .nav-links .nav-cta { background: var(--ink); color: var(--mill); margin-left: 8px; }
-    .nav-links .nav-cta:hover { text-decoration: none; background: var(--temper); }
+    .nav-links .nav-cta:hover { text-decoration: none; background: var(--rust-700); }
 
     /* Buttons */
     .button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 12px 22px; background: var(--ink); color: var(--mill); text-decoration: none; font-weight: 700; font-size: 17px; transition: background-color .2s ease, color .2s ease; }
-    .button:hover { background: var(--temper); }
+    .button:hover { background: var(--rust-700); }
     .button:active { transform: translateY(1px); }
-    .button-primary { background: var(--straw); color: var(--ink); }
-    .button-primary:hover { background: var(--ink); color: var(--straw); }
+    .button-primary { background: var(--rust-500); color: var(--paper); }
+    .button-primary:hover { background: var(--ink); color: var(--rust-200); }
     .button-quiet { background: var(--mill-2); color: var(--ink); }
     .button-quiet:hover { background: var(--ink); color: var(--mill); }
 
     /* Hero */
     .hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(36px, 6vw, 88px); align-items: center; padding: clamp(64px, 9vw, 120px) 0 clamp(72px, 9vw, 112px); }
     .hero h1 { font-size: clamp(40px, 8vw, 112px); line-height: .94; letter-spacing: -.028em; }
-    .hero h1 span { color: var(--temper); }
+    .hero h1 span { color: var(--rust-600); }
     .hero-copy { margin-top: 32px; font-size: 20px; color: var(--ink-2); max-width: 46ch; }
     .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 40px; }
 
-    .manifest { background: var(--temper); color: var(--paper); padding: clamp(24px, 3vw, 36px); }
+    .manifest { background: var(--rust-700); color: var(--paper); padding: clamp(24px, 3vw, 36px); }
     .manifest-title { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-bottom: 18px; font-weight: 700; font-size: 20px; }
-    .manifest-title small { font-size: 14px; font-weight: 500; color: var(--temper-muted); }
+    .manifest-name { display: inline-flex; align-items: center; gap: 12px; }
+    .manifest-title small { font-size: 14px; font-weight: 500; color: var(--rust-50); }
     .manifest ol { display: grid; gap: 4px; }
     .manifest li { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 14px; padding: 18px 0; border-top: 0; }
-    .manifest .id { font-size: 14px; font-weight: 700; color: var(--ink); background: var(--straw); padding: 3px 7px; justify-self: start; height: fit-content; }
+    .manifest .id { font-size: 14px; font-weight: 700; color: var(--ink); background: var(--rust-100); padding: 3px 7px; justify-self: start; height: fit-content; }
     .manifest strong { display: block; font-size: 20px; font-weight: 650; letter-spacing: -.01em; }
-    .manifest span.desc { display: block; color: var(--temper-muted); font-size: 17px; line-height: 1.45; margin-top: 2px; }
-    .manifest-foot { margin-top: 18px; color: var(--temper-muted); font-size: 14px; }
+    .manifest span.desc { display: block; color: var(--rust-50); font-size: 17px; line-height: 1.45; margin-top: 2px; }
+    .manifest-foot { margin-top: 18px; color: var(--rust-50); font-size: 14px; }
 
     /* Sections */
     .section { padding: clamp(88px, 11vw, 144px) 0; }
@@ -107,43 +113,43 @@
     .section-lede { margin-top: 28px; font-size: 20px; color: var(--ink-2); max-width: 56ch; }
 
     /* Install */
-    .install { background: var(--temper); color: var(--paper); }
-    .install .section-lede { color: var(--temper-muted); }
+    .install { background: var(--rust-700); color: var(--paper); }
+    .install .section-lede { color: var(--rust-50); }
     .install-grid { margin-top: clamp(48px, 6vw, 72px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(40px, 5vw, 80px); align-items: start; }
-    .steps { display: grid; gap: 22px; counter-reset: none; list-style: decimal; padding-left: 0; }
-    .steps li { display: block; padding: 24px 0; margin-left: 0; }
-    .steps li::marker { font-family: var(--sans); font-weight: 760; color: var(--straw); font-size: 20px; }
+    .steps { display: grid; gap: 22px; list-style: decimal outside; padding-left: 1.6em; }
+    .steps li { display: list-item; padding: 24px 0 0 6px; }
+    .steps li::marker { font-family: var(--sans); font-weight: 760; color: var(--rust-50); font-size: 20px; }
     .steps strong { display: block; font-size: 20px; font-weight: 650; }
-    .steps p { color: var(--temper-muted); font-size: 17px; margin-top: 6px; }
+    .steps p { color: var(--rust-50); font-size: 17px; margin-top: 6px; }
     .steps p a { color: var(--paper); }
 
     .picker { display: grid; gap: 10px; margin-bottom: 20px; }
     .picker label { font-weight: 700; font-size: 17px; }
     .picker select { appearance: none; -webkit-appearance: none; width: 100%; min-height: 52px; padding: 12px 44px 12px 16px; background: var(--paper); color: var(--ink); border: 0; font: 600 17px var(--sans); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%2314171c' stroke-width='2'/%3E%3C/svg%3E"); background-position: calc(100% - 18px) 50%; background-repeat: no-repeat; }
-    .picker select:focus-visible { outline: 3px solid var(--straw); outline-offset: 2px; }
-    .picker .hint { color: var(--temper-muted); font-size: 14px; }
+    .picker select:focus-visible { outline: 3px solid var(--rust-300); outline-offset: 2px; }
+    .picker .hint { color: var(--rust-50); font-size: 14px; }
 
-    .console { background: var(--code); color: var(--code-text); }
-    .console-head { display: flex; justify-content: space-between; gap: 12px; padding: 14px 20px; background: var(--temper-deep); font-size: 14px; color: var(--code-muted); }
+    .console { background: var(--ink); color: var(--code-text); }
+    .console-head { display: flex; justify-content: space-between; gap: 12px; padding: 14px 20px; background: var(--rust-700); font-size: 14px; color: var(--code-muted); }
     .cmd { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 16px 20px; }
     .cmd:nth-child(odd) { background: rgba(255, 255, 255, .03); }
     .cmd code { white-space: pre-wrap; overflow-wrap: anywhere; color: var(--code-text); font-size: 14px; line-height: 1.6; }
-    .cmd code::before { content: "$ "; color: var(--straw); }
+    .cmd code::before { content: "$ "; color: var(--rust-300); }
     .cmd-note { grid-column: 1 / -1; margin-top: -6px; color: var(--code-muted); font-size: 14px; }
-    .copy { min-height: 44px; min-width: 80px; padding: 8px 14px; background: var(--straw); border: 0; color: var(--ink); font: 700 14px var(--sans); cursor: pointer; }
-    .copy:hover { background: var(--paper); }
+    .copy { min-height: 44px; min-width: 80px; padding: 8px 14px; background: var(--rust-500); border: 0; color: var(--paper); font: 700 14px var(--sans); cursor: pointer; }
+    .copy:hover { background: var(--rust-700); }
     .copy[hidden] { display: none; }
-    .console-foot { padding: 14px 20px; font-size: 14px; color: var(--code-muted); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--temper-deep); }
+    .console-foot { padding: 14px 20px; font-size: 14px; color: var(--code-muted); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--rust-700); }
     .console-foot code { color: var(--code-text); }
-    .status { color: var(--straw); min-height: 1.2em; }
+    .status { color: var(--rust-300); min-height: 1.2em; }
     .plugin-label { margin: 40px 0 14px; font-weight: 700; font-size: 20px; }
-    .plugin-note { margin-top: 22px; color: var(--temper-muted); font-size: 14px; }
+    .plugin-note { margin-top: 22px; color: var(--rust-50); font-size: 14px; }
     .plugin-note a { color: var(--paper); font-weight: 650; }
 
     /* Skills */
     .skill-list { margin-top: clamp(48px, 6vw, 72px); }
     .skill-row { display: grid; grid-template-columns: 96px minmax(0, 1.15fr) minmax(0, 1.4fr) minmax(0, 1fr); gap: clamp(16px, 2.6vw, 36px); padding: 40px 0; align-items: start; }
-        .skill-id { font-size: 14px; font-weight: 700; padding-top: 6px; color: var(--temper); }
+        .skill-id { font-size: 14px; font-weight: 700; padding-top: 6px; color: var(--rust-700); }
     .skill-name { font-size: 34px; font-weight: 720; font-stretch: 88%; letter-spacing: -.02em; line-height: 1.02; }
     .skill-role { display: block; margin-top: 10px; font-size: 14px; color: var(--ink-2); font-weight: 560; }
     .skill-desc { font-size: 17px; }
@@ -155,12 +161,12 @@
     .method { background: var(--mill-2); }
     .method-grid { margin-top: clamp(48px, 6vw, 72px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 3vw, 40px); }
     .method-col { padding: clamp(28px, 3.4vw, 44px); background: var(--mill); }
-    .method-col.checked { background: var(--temper); color: var(--paper); }
+    .method-col.checked { background: var(--rust-500); color: var(--paper); }
     .method-col h3 { font-size: 34px; }
     .method-col ul { margin-top: 26px; display: grid; gap: 18px; }
     .method-col li { padding-left: 24px; position: relative; font-size: 20px; line-height: 1.5; }
-    .method-col li::before { content: ""; position: absolute; left: 0; top: .62em; width: 10px; height: 10px; background: var(--temper); }
-    .method-col.checked li::before { background: var(--straw); }
+    .method-col li::before { content: ""; position: absolute; left: 0; top: .62em; width: 10px; height: 10px; background: var(--rust-500); }
+    .method-col.checked li::before { background: var(--rust-300); }
     .method-note { margin-top: 36px; font-size: 20px; max-width: 60ch; color: var(--ink-2); }
 
     /* Agents + verify */
@@ -171,33 +177,37 @@
     tbody tr:nth-child(odd) { background: var(--mill); }
     thead th { font-weight: 700; font-size: 14px; color: var(--ink-2); }
     tbody th { font-weight: 650; white-space: nowrap; }
-    td code { white-space: nowrap; color: var(--temper-deep); }
+    td code { white-space: nowrap; color: var(--rust-800); }
     .grade { display: inline-block; font-weight: 700; font-size: 14px; padding: 3px 9px; white-space: nowrap; }
-    .grade-official { background: var(--straw); color: var(--ink); }
+    .grade-official { background: var(--rust-300); color: var(--ink); }
     .grade-conflict { background: var(--ink); color: var(--mill); }
     .grade-third { background: var(--mill-2); color: var(--ink); }
-    .table-foot { margin-top: 18px; font-size: 14px; color: var(--ink-2); }
-    .table-foot a { color: var(--temper); font-weight: 650; }
+    .table-foot { margin-top: 18px; font-size: 14px; color: var(--ink-2); max-width: 68ch; }
+    .table-foot a { color: var(--rust-700); font-weight: 650; }
 
     .verify { margin-top: clamp(88px, 11vw, 136px); }
     .verify h2 { font-size: min(88px, max(44px, 6.1vw)); margin-bottom: clamp(40px, 5vw, 64px); }
     .verify-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(36px, 6vw, 96px); align-items: start; }
-    .verify-steps { display: grid; gap: 22px; list-style: decimal; padding-left: 0; }
-    .verify-steps li { padding: 0; font-size: 20px; margin-left: 24px; }
-    .verify-steps li::marker { font-weight: 760; color: var(--temper); }
+    .verify-steps { display: grid; gap: 22px; list-style: decimal outside; padding-left: 1.6em; }
+    .verify-steps li { display: list-item; padding: 0 0 0 6px; font-size: 20px; }
+    .verify-steps li::marker { font-weight: 760; color: var(--rust-700); }
     .verify-steps strong { font-weight: 700; }
-    .caveat { margin-top: 28px; padding: 22px 24px; background: var(--straw); color: var(--ink); font-size: 17px; }
+    .caveat { margin-top: 28px; padding: 22px 24px; background: var(--rust-100); color: var(--ink); font-size: 17px; }
     .caveat strong { font-weight: 760; }
-    .text-link { display: inline-block; margin-top: 26px; font-weight: 700; color: var(--temper); }
+    .text-link { display: inline-block; margin-top: 26px; font-weight: 700; color: var(--rust-700); }
 
     /* Footer */
     footer { background: var(--ink); color: var(--mill); padding: clamp(64px, 8vw, 96px) 0 56px; }
     .foot-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 40px; align-items: end; }
+    .foot-brand { display: flex; align-items: center; gap: 16px; }
     .foot-title { font-size: min(88px, max(48px, 7vw)); font-weight: 760; font-stretch: 88%; letter-spacing: -.04em; line-height: .9; }
-    .foot-meta { margin-top: 18px; color: var(--mill-2); font-size: 14px; }
+    .foot-meta { margin-top: 18px; color: var(--mill-2); font-size: 14px; max-width: 56ch; }
     .foot-links { display: grid; grid-template-columns: repeat(2, auto); gap: 6px 36px; font-size: 17px; }
     .foot-links a { text-decoration: none; padding: 8px 0; min-height: 44px; display: inline-flex; align-items: center; color: var(--mill); }
-    .foot-links a:hover { color: var(--straw); text-decoration: underline; text-underline-offset: .25em; }
+    .foot-links a:hover { color: var(--rust-300); text-decoration: underline; text-underline-offset: .25em; }
+
+    /* Measure: running text stays within about 68 characters per line */
+    main p, footer p, .caveat { max-width: 68ch; }
 
     /* Motion: entrance reveals only when JavaScript is running; content is visible otherwise */
     .js .rv { transform: translateY(22px); transition: transform .8s cubic-bezier(.2,.7,.2,1); transition-delay: var(--d, 0ms); }
@@ -238,7 +248,7 @@
       .steps li { padding: 18px 0; }
     }
     @media (prefers-contrast: more) {
-      :root { --ink-2: #14171c; --temper-muted: #ffffff; --mill-2: #dfe3de; --temper-deep: #1b3159; }
+      :root { --ink-2: #14171c; --rust-50: #ffffff; --mill-2: #dfe3de; --rust-700: #5e1f07; }
       .button, .copy, .grade, .manifest .id { border: 2px solid currentColor; }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -254,7 +264,7 @@
 
   <header class="site-head">
     <div class="wrap nav">
-      <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"></span>Rustacean</a>
+      <a class="brand" href="#top"><img class="brand-mark" src="assets/brand/rust-logo-single-path.svg" alt="" width="34" height="34">Rustacean</a>
       <nav class="nav-links" aria-label="Main navigation">
         <a href="#skills">Skills</a>
         <a href="#method">Method</a>
@@ -277,7 +287,7 @@
       </div>
 
       <div class="manifest rv" style="--d:120ms" role="region" aria-labelledby="manifest-title">
-        <div class="manifest-title"><span id="manifest-title">The five skills</span><small>BP-* rule IDs</small></div>
+        <div class="manifest-title"><span class="manifest-name"><img src="assets/brand/rust-logo-white-outline.svg" alt="" width="40" height="40"><span id="manifest-title">The five skills</span></span><small>BP-* rule IDs</small></div>
         <ol>
           <li class="rv" style="--d:180ms"><span class="id">RS-01</span><div><strong>Best practices</strong><span class="desc">The rulebook. Baseline for the other four.</span></div></li>
           <li class="rv" style="--d:240ms"><span class="id">RS-02</span><div><strong>Implementation</strong><span class="desc">Requirements-first build procedure. Cites BP-* rules.</span></div></li>
@@ -465,8 +475,9 @@
   <footer>
     <div class="wrap foot-grid">
       <div>
-        <div class="foot-title">Rustacean</div>
+        <div class="foot-brand"><img src="assets/brand/rust-logo-white-outline.svg" alt="" width="56" height="56"><div class="foot-title">Rustacean</div></div>
         <p class="foot-meta">Enterprise-oriented Rust engineering skills. Open source under Apache License 2.0.</p>
+        <p class="foot-meta">Rustacean is an independent community project. It is not affiliated with, endorsed by, or sponsored by the Rust Foundation or the Rust project. The Rust logo is © Rust Foundation, licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a>; its trademark terms are at <a href="https://rustfoundation.org/policy/rust-trademark-policy/">rustfoundation.org</a>. Logo files are in <code>assets/brand/</code>.</p>
       </div>
       <nav class="foot-links" aria-label="Project resources">
         <a href="https://github.com/jelome265/Rustacean">Source repository</a>
