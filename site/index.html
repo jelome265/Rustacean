@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#2c4a7b">
   <meta name="description" content="Rustacean is a coordinated suite of five agent skills for disciplined, secure, production-ready Rust engineering.">
   <meta property="og:title" content="Rustacean — Rust rules you can check">
-  <meta property="og:description" content="Five coordinated agent skills. Explicit rules. Checks that can be verified.">
+  <meta property="og:description" content="Five coordinated agent skills. Explicit rules. Checks you can verify.">
   <meta property="og:type" content="website">
   <title>Rustacean — Rust rules you can check</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%232c4a7b'/%3E%3Crect x='6' y='6' width='20' height='20' fill='%23e0b14a'/%3E%3C/svg%3E">
@@ -15,11 +15,11 @@
   <style>
     @font-face {
       font-family: "Bricolage Grotesque";
-      src: url("assets/fonts/bricolage-grotesque-latin-standard-normal.woff2") format("woff2-variations"), url("assets/fonts/bricolage-grotesque-latin-standard-normal.woff2") format("woff2");
+      src: url("assets/fonts/bricolage-grotesque-latin-standard-normal.woff2") format("woff2");
       font-weight: 200 800; font-stretch: 75% 100%; font-style: normal; font-display: swap;
     }
     @font-face {
-      font-family: "JetBrains Mono";
+      font-family: "JetBrains Mono"; /* taste-skill-ignore: literal code only */
       src: url("assets/fonts/jetbrains-mono-latin-wght-normal.woff2") format("woff2");
       font-weight: 100 800; font-style: normal; font-display: swap;
     }
@@ -28,12 +28,11 @@
       --mill: #eef0ec;
       --mill-2: #e2e6e1;
       --ink: #14171c;
-      --ink-2: #4a525c;
-      --rule: #c3cac4;
+      --ink-2: #252b33;
       --temper: #2c4a7b;
       --temper-deep: #213a63;
-      --paper: #f3f1ea;
-      --temper-muted: #c9d6ea;
+      --paper: #eef2f5;
+      --temper-muted: #e3ebf6;
       --straw: #e0b14a;
       --code: #111a2b;
       --code-text: #e9eef7;
@@ -41,7 +40,7 @@
       --max: 1240px;
       --gutter: clamp(20px, 4.2vw, 56px);
       --sans: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
-      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; /* taste-skill-ignore: literal code only */
     }
 
     *, *::before, *::after { box-sizing: border-box; }
@@ -61,137 +60,147 @@
 
     .skip { position: absolute; left: 12px; top: -80px; z-index: 100; background: var(--straw); color: var(--ink); padding: 10px 14px; font-weight: 700; text-decoration: none; }
     .skip:focus { top: 12px; }
-    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
     .wrap { width: min(var(--max), calc(100% - var(--gutter) * 2)); margin-inline: auto; }
 
     /* Header */
-    .site-head { background: var(--mill); border-bottom: 2px solid var(--ink); }
-    .nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding: 12px 0; }
-    .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 760; font-stretch: 88%; font-size: 22px; letter-spacing: -.02em; }
+    .site-head { background: var(--mill-2); }
+    .nav { min-height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding: 12px 0; }
+    .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 760; font-stretch: 88%; font-size: 20px; letter-spacing: -.02em; }
     .brand-mark { width: 30px; height: 30px; background: var(--temper); position: relative; flex: none; }
     .brand-mark::after { content: ""; position: absolute; inset: 7px; background: var(--straw); }
-    .nav-links { display: flex; align-items: center; flex-wrap: wrap; gap: 2px; font-size: 15px; font-weight: 560; }
+    .nav-links { display: flex; align-items: center; flex-wrap: wrap; gap: 2px; font-size: 17px; font-weight: 560; }
     .nav-links a { text-decoration: none; padding: 10px 12px; min-height: 44px; display: inline-flex; align-items: center; }
     .nav-links a:hover { text-decoration: underline; text-underline-offset: .25em; }
     .nav-links .nav-cta { background: var(--ink); color: var(--mill); margin-left: 8px; }
     .nav-links .nav-cta:hover { text-decoration: none; background: var(--temper); }
 
     /* Buttons */
-    .button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 12px 22px; border: 2px solid var(--ink); background: transparent; color: var(--ink); text-decoration: none; font-weight: 700; font-size: 16px; }
-    .button:hover { background: var(--ink); color: var(--mill); }
-    .button-primary { background: var(--straw); }
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 12px 22px; background: var(--ink); color: var(--mill); text-decoration: none; font-weight: 700; font-size: 17px; transition: background-color .2s ease, color .2s ease; }
+    .button:hover { background: var(--temper); }
+    .button:active { transform: translateY(1px); }
+    .button-primary { background: var(--straw); color: var(--ink); }
     .button-primary:hover { background: var(--ink); color: var(--straw); }
+    .button-quiet { background: var(--mill-2); color: var(--ink); }
+    .button-quiet:hover { background: var(--ink); color: var(--mill); }
 
     /* Hero */
     .hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(36px, 6vw, 88px); align-items: center; padding: clamp(64px, 9vw, 120px) 0 clamp(72px, 9vw, 112px); }
-    .hero h1 { font-size: clamp(56px, 8vw, 112px); line-height: .94; letter-spacing: -.028em; }
+    .hero h1 { font-size: clamp(40px, 8vw, 112px); line-height: .94; letter-spacing: -.028em; }
     .hero h1 span { color: var(--temper); }
-    .hero-copy { margin-top: 32px; font-size: clamp(18px, 1.7vw, 21px); color: var(--ink-2); max-width: 46ch; }
+    .hero-copy { margin-top: 32px; font-size: 20px; color: var(--ink-2); max-width: 46ch; }
     .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 40px; }
 
     .manifest { background: var(--temper); color: var(--paper); padding: clamp(24px, 3vw, 36px); }
-    .manifest-title { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(243, 241, 234, .35); font-weight: 700; font-size: 18px; }
-    .manifest-title small { font-family: var(--mono); font-weight: 400; font-size: 13px; color: var(--temper-muted); }
-    .manifest ol { counter-reset: row; }
-    .manifest li { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 14px; padding: 16px 0; border-bottom: 1px solid rgba(243, 241, 234, .2); }
-    .manifest li:last-child { border-bottom: 0; }
-    .manifest .id { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--paper); padding-top: 3px; justify-self: start; border-bottom: 3px solid var(--straw); line-height: 1.2; }
-    .manifest strong { display: block; font-size: 18px; font-weight: 650; letter-spacing: -.01em; }
-    .manifest span { display: block; color: var(--temper-muted); font-size: 15px; line-height: 1.45; margin-top: 2px; }
-    .manifest-foot { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(243, 241, 234, .35); font-family: var(--mono); font-size: 13px; color: var(--temper-muted); }
+    .manifest-title { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-bottom: 18px; font-weight: 700; font-size: 20px; }
+    .manifest-title small { font-size: 14px; font-weight: 500; color: var(--temper-muted); }
+    .manifest ol { display: grid; gap: 4px; }
+    .manifest li { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 14px; padding: 18px 0; border-top: 0; }
+    .manifest .id { font-size: 14px; font-weight: 700; color: var(--ink); background: var(--straw); padding: 3px 7px; justify-self: start; height: fit-content; }
+    .manifest strong { display: block; font-size: 20px; font-weight: 650; letter-spacing: -.01em; }
+    .manifest span.desc { display: block; color: var(--temper-muted); font-size: 17px; line-height: 1.45; margin-top: 2px; }
+    .manifest-foot { margin-top: 18px; color: var(--temper-muted); font-size: 14px; }
 
     /* Sections */
-    .section { padding: clamp(80px, 10vw, 136px) 0; border-top: 2px solid var(--ink); }
-    .section-title { font-size: clamp(44px, 6vw, 88px); line-height: .98; letter-spacing: -.025em; max-width: 14ch; }
-    .section-lede { margin-top: 28px; font-size: clamp(18px, 1.6vw, 20px); color: var(--ink-2); max-width: 56ch; }
+    .section { padding: clamp(88px, 11vw, 144px) 0; }
+    .section-title { font-size: min(88px, max(44px, 6.1vw)); line-height: .98; letter-spacing: -.025em; }
+    .section-lede { margin-top: 28px; font-size: 20px; color: var(--ink-2); max-width: 56ch; }
 
     /* Install */
     .install { background: var(--temper); color: var(--paper); }
     .install .section-lede { color: var(--temper-muted); }
-    .install-grid { margin-top: clamp(48px, 6vw, 72px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(36px, 5vw, 72px); align-items: start; }
-    .steps { display: grid; gap: 0; counter-reset: step; }
-    .steps li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 12px; padding: 22px 0; border-top: 1px solid rgba(243, 241, 234, .3); }
-    .steps li:last-child { border-bottom: 1px solid rgba(243, 241, 234, .3); }
-    .steps .n { font-weight: 760; font-stretch: 88%; font-size: 40px; line-height: 1; color: var(--straw); }
-    .steps strong { display: block; font-size: 19px; font-weight: 650; }
-    .steps p { color: var(--temper-muted); font-size: 16px; margin-top: 4px; }
+    .install-grid { margin-top: clamp(48px, 6vw, 72px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(40px, 5vw, 80px); align-items: start; }
+    .steps { display: grid; gap: 22px; counter-reset: none; list-style: decimal; padding-left: 0; }
+    .steps li { display: block; padding: 24px 0; margin-left: 0; }
+    .steps li::marker { font-family: var(--sans); font-weight: 760; color: var(--straw); font-size: 20px; }
+    .steps strong { display: block; font-size: 20px; font-weight: 650; }
+    .steps p { color: var(--temper-muted); font-size: 17px; margin-top: 6px; }
     .steps p a { color: var(--paper); }
 
-    .console { background: var(--code); color: var(--code-text); border: 1px solid rgba(243, 241, 234, .25); }
-    .console-head { display: flex; justify-content: space-between; gap: 12px; padding: 12px 18px; border-bottom: 1px solid rgba(243, 241, 234, .2); font-family: var(--mono); font-size: 13px; color: var(--code-muted); }
-    .cmd { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(243, 241, 234, .12); }
-    .cmd:last-child { border-bottom: 0; }
+    .picker { display: grid; gap: 10px; margin-bottom: 20px; }
+    .picker label { font-weight: 700; font-size: 17px; }
+    .picker select { appearance: none; -webkit-appearance: none; width: 100%; min-height: 52px; padding: 12px 44px 12px 16px; background: var(--paper); color: var(--ink); border: 0; font: 600 17px var(--sans); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%2314171c' stroke-width='2'/%3E%3C/svg%3E"); background-position: calc(100% - 18px) 50%; background-repeat: no-repeat; }
+    .picker select:focus-visible { outline: 3px solid var(--straw); outline-offset: 2px; }
+    .picker .hint { color: var(--temper-muted); font-size: 14px; }
+
+    .console { background: var(--code); color: var(--code-text); }
+    .console-head { display: flex; justify-content: space-between; gap: 12px; padding: 14px 20px; background: var(--temper-deep); font-size: 14px; color: var(--code-muted); }
+    .cmd { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 16px 20px; }
+    .cmd:nth-child(odd) { background: rgba(255, 255, 255, .03); }
     .cmd code { white-space: pre-wrap; overflow-wrap: anywhere; color: var(--code-text); font-size: 14px; line-height: 1.6; }
     .cmd code::before { content: "$ "; color: var(--straw); }
     .cmd-note { grid-column: 1 / -1; margin-top: -6px; color: var(--code-muted); font-size: 14px; }
-    .copy { min-height: 40px; min-width: 76px; padding: 6px 12px; background: transparent; border: 1.5px solid var(--code-muted); color: var(--code-text); font: 700 13px var(--sans); cursor: pointer; }
-    .copy:hover { border-color: var(--straw); color: var(--straw); }
+    .copy { min-height: 42px; min-width: 80px; padding: 8px 14px; background: var(--straw); border: 0; color: var(--ink); font: 700 14px var(--sans); cursor: pointer; }
+    .copy:hover { background: var(--paper); }
     .copy[hidden] { display: none; }
-    .console-foot { padding: 14px 18px; font-size: 14px; color: var(--code-muted); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid rgba(243, 241, 234, .2); }
+    .console-foot { padding: 14px 20px; font-size: 14px; color: var(--code-muted); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--temper-deep); }
     .console-foot code { color: var(--code-text); }
     .status { color: var(--straw); min-height: 1.2em; }
-    .plugin-label { margin: 36px 0 12px; font-weight: 650; font-size: 16px; color: var(--paper); }
-    .plugin-note { margin-top: 20px; color: var(--temper-muted); font-size: 15px; }
-    .plugin-note a { color: var(--paper); }
+    .plugin-label { margin: 40px 0 14px; font-weight: 700; font-size: 20px; }
+    .plugin-note { margin-top: 22px; color: var(--temper-muted); font-size: 14px; }
+    .plugin-note a { color: var(--paper); font-weight: 650; }
 
     /* Skills */
-    .skill-list { margin-top: clamp(48px, 6vw, 72px); border-top: 2px solid var(--ink); }
-    .skill-row { display: grid; grid-template-columns: 96px minmax(0, 1.15fr) minmax(0, 1.4fr) minmax(0, 1fr); gap: clamp(16px, 2.6vw, 36px); padding: 32px 0; border-bottom: 1px solid var(--rule); align-items: start; }
-    .skill-id { font-family: var(--mono); font-size: 14px; padding-top: 6px; color: var(--temper); font-weight: 700; }
-    .skill-name { font-size: clamp(26px, 2.6vw, 34px); font-weight: 720; font-stretch: 88%; letter-spacing: -.02em; line-height: 1.02; }
-    .skill-role { display: block; margin-top: 10px; font-size: 15px; color: var(--ink-2); font-weight: 560; }
+    .skill-list { margin-top: clamp(48px, 6vw, 72px); }
+    .skill-row { display: grid; grid-template-columns: 96px minmax(0, 1.15fr) minmax(0, 1.4fr) minmax(0, 1fr); gap: clamp(16px, 2.6vw, 36px); padding: 40px 0; align-items: start; }
+        .skill-id { font-size: 14px; font-weight: 700; padding-top: 6px; color: var(--temper); }
+    .skill-name { font-size: 34px; font-weight: 720; font-stretch: 88%; letter-spacing: -.02em; line-height: 1.02; }
+    .skill-role { display: block; margin-top: 10px; font-size: 14px; color: var(--ink-2); font-weight: 560; }
     .skill-desc { font-size: 17px; }
-    .skill-desc dt { font-size: 13px; font-weight: 700; color: var(--ink-2); margin-top: 14px; }
+    .skill-desc dt { font-size: 14px; font-weight: 700; color: var(--ink-2); margin-top: 14px; }
     .skill-desc dt:first-child { margin-top: 0; }
     .skill-desc dd { margin: 3px 0 0; }
 
     /* Method */
     .method { background: var(--mill-2); }
-    .method-grid { margin-top: clamp(48px, 6vw, 72px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; border-top: 2px solid var(--ink); }
-    .method-col { padding: 36px clamp(0px, 2.6vw, 40px) 40px 0; }
-    .method-col + .method-col { padding: 36px 0 40px clamp(0px, 2.6vw, 40px); border-left: 2px solid var(--ink); }
-    .method-col h3 { font-size: clamp(28px, 3vw, 40px); }
+    .method-grid { margin-top: clamp(48px, 6vw, 72px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 3vw, 40px); }
+    .method-col { padding: clamp(28px, 3.4vw, 44px); background: var(--mill); }
+    .method-col.checked { background: var(--temper); color: var(--paper); }
+    .method-col h3 { font-size: 34px; }
     .method-col ul { margin-top: 26px; display: grid; gap: 18px; }
-    .method-col li { padding-left: 22px; position: relative; font-size: 18px; line-height: 1.5; }
+    .method-col li { padding-left: 24px; position: relative; font-size: 20px; line-height: 1.5; }
     .method-col li::before { content: ""; position: absolute; left: 0; top: .62em; width: 10px; height: 10px; background: var(--temper); }
-    .method-col.checked li::before { background: var(--straw); outline: 2px solid var(--ink); }
-    .method-note { margin-top: 36px; font-size: 18px; max-width: 60ch; color: var(--ink-2); }
+    .method-col.checked li::before { background: var(--straw); }
+    .method-note { margin-top: 36px; font-size: 20px; max-width: 60ch; color: var(--ink-2); }
 
     /* Agents + verify */
-    .table-wrap { margin-top: clamp(40px, 5vw, 56px); border: 2px solid var(--ink); background: var(--mill); overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 780px; }
-    caption { text-align: left; padding: 16px 18px; font-size: 15px; color: var(--ink-2); border-bottom: 2px solid var(--ink); }
-    th, td { text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--rule); vertical-align: top; }
-    tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
-    thead th { font-family: var(--mono); font-weight: 500; font-size: 12px; color: var(--ink-2); text-transform: uppercase; letter-spacing: .06em; }
+    .table-wrap { margin-top: clamp(40px, 5vw, 56px); background: var(--mill-2); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 780px; }
+    caption { text-align: left; padding: 18px 20px; font-size: 14px; color: var(--ink-2); }
+    th, td { text-align: left; padding: 15px 20px; vertical-align: top; }
+    tbody tr:nth-child(odd) { background: var(--mill); }
+    thead th { font-weight: 700; font-size: 14px; color: var(--ink-2); }
     tbody th { font-weight: 650; white-space: nowrap; }
     td code { white-space: nowrap; color: var(--temper-deep); }
-    .grade { display: inline-block; font-weight: 700; font-size: 13px; padding: 2px 8px; border: 1.5px solid var(--ink); white-space: nowrap; }
-    .grade-official { background: var(--straw); }
+    .grade { display: inline-block; font-weight: 700; font-size: 14px; padding: 3px 9px; white-space: nowrap; }
+    .grade-official { background: var(--straw); color: var(--ink); }
     .grade-conflict { background: var(--ink); color: var(--mill); }
-    .grade-third { background: transparent; }
-    .table-foot { margin-top: 16px; font-size: 15px; color: var(--ink-2); }
+    .grade-third { background: var(--mill-2); color: var(--ink); }
+    .table-foot { margin-top: 18px; font-size: 14px; color: var(--ink-2); }
     .table-foot a { color: var(--temper); font-weight: 650; }
 
-    .verify { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(36px, 6vw, 96px); align-items: start; margin-top: clamp(80px, 10vw, 120px); padding-top: clamp(56px, 7vw, 80px); border-top: 2px solid var(--ink); }
-    .verify h2 { font-size: clamp(40px, 5vw, 72px); }
-    .verify-steps { display: grid; gap: 0; }
-    .verify-steps li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 12px; padding: 20px 0; border-top: 1px solid var(--rule); font-size: 18px; }
-    .verify-steps li:last-child { border-bottom: 1px solid var(--rule); }
-    .verify-steps .n { font-weight: 760; font-stretch: 88%; font-size: 32px; line-height: 1.1; color: var(--temper); }
+    .verify { margin-top: clamp(88px, 11vw, 136px); }
+    .verify h2 { font-size: min(88px, max(44px, 6.1vw)); margin-bottom: clamp(40px, 5vw, 64px); }
+    .verify-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(36px, 6vw, 96px); align-items: start; }
+    .verify-steps { display: grid; gap: 22px; list-style: decimal; padding-left: 0; }
+    .verify-steps li { padding: 0; font-size: 20px; margin-left: 24px; }
+    .verify-steps li::marker { font-weight: 760; color: var(--temper); }
     .verify-steps strong { font-weight: 700; }
     .caveat { margin-top: 28px; padding: 22px 24px; background: var(--straw); color: var(--ink); font-size: 17px; }
     .caveat strong { font-weight: 760; }
     .text-link { display: inline-block; margin-top: 26px; font-weight: 700; color: var(--temper); }
 
     /* Footer */
-    footer { background: var(--ink); color: var(--mill); padding: clamp(56px, 7vw, 88px) 0 48px; }
+    footer { background: var(--ink); color: var(--mill); padding: clamp(64px, 8vw, 96px) 0 56px; }
     .foot-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 40px; align-items: end; }
-    .foot-title { font-size: clamp(48px, 7vw, 96px); font-weight: 760; font-stretch: 88%; letter-spacing: -.04em; line-height: .9; }
-    .foot-meta { margin-top: 18px; color: var(--mill-2); font-size: 15px; }
-    .foot-links { display: grid; grid-template-columns: repeat(2, auto); gap: 6px 36px; font-size: 16px; }
+    .foot-title { font-size: min(88px, max(48px, 7vw)); font-weight: 760; font-stretch: 88%; letter-spacing: -.04em; line-height: .9; }
+    .foot-meta { margin-top: 18px; color: var(--mill-2); font-size: 14px; }
+    .foot-links { display: grid; grid-template-columns: repeat(2, auto); gap: 6px 36px; font-size: 17px; }
     .foot-links a { text-decoration: none; padding: 8px 0; min-height: 44px; display: inline-flex; align-items: center; color: var(--mill); }
     .foot-links a:hover { color: var(--straw); text-decoration: underline; text-underline-offset: .25em; }
+
+    /* Motion: entrance reveals only when JavaScript is running; content is visible otherwise */
+    .js .rv { transform: translateY(22px); transition: transform .8s cubic-bezier(.2,.7,.2,1); transition-delay: var(--d, 0ms); }
+    .js .rv.in { transform: none; }
 
     /* Responsive */
     @media (max-width: 1080px) {
@@ -201,25 +210,39 @@
     @media (max-width: 920px) {
       .hero, .install-grid, .verify { grid-template-columns: 1fr; }
       .method-grid { grid-template-columns: 1fr; }
-      .method-col, .method-col + .method-col { padding: 36px 0; border-left: 0; }
-      .method-col + .method-col { border-top: 2px solid var(--ink); }
       .foot-grid { grid-template-columns: 1fr; }
     }
+    @media (max-width: 900px) {
+      table, thead, tbody, tr, th, td { display: block; }
+      table { min-width: 0; }
+      thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+      tbody tr { padding: 18px 20px; }
+      tbody th { padding: 0 0 10px; white-space: normal; font-size: 17px; }
+      td { padding: 6px 0; }
+      td::before { content: attr(data-label); display: block; font-size: 14px; font-weight: 700; color: var(--ink-2); margin-bottom: 2px; }
+      td code { white-space: normal; }
+      .table-wrap { overflow: visible; }
+    }
     @media (max-width: 720px) {
-      .nav-links a { padding: 10px 8px; }
-      .nav-links .nav-cta { margin-left: 0; }
-      .skill-row { grid-template-columns: 1fr; gap: 14px; padding: 28px 0; }
-      .skill-row .skill-desc-wrap { grid-column: auto; }
-      .skill-id { padding-top: 0; }
+      .nav { padding: 10px 0; min-height: 0; gap: 10px; }
+      .nav-links { font-size: 16px; justify-content: space-between; width: 100%; flex-wrap: nowrap; }
+      .nav-links a { padding: 10px 6px; }
+      .nav-links .nav-cta { margin-left: 0; padding: 10px 12px; }
+      .skill-row { grid-template-columns: 76px minmax(0, 1fr); gap: 10px 14px; padding: 48px 0; }
+      .skill-row > p, .skill-row > dl { grid-column: 1 / -1; }
+      .skill-id { padding-top: 6px; }
       .cmd { grid-template-columns: minmax(0, 1fr); }
       .cmd .copy { justify-self: start; }
       .hero-actions .button { flex: 1 1 100%; }
+      .steps li { padding: 18px 0; }
     }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
+      .js .rv { transform: none; transition: none; }
       * { transition: none !important; animation: none !important; }
     }
   </style>
+  <script>document.documentElement.classList.add("js");</script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -239,23 +262,23 @@
 
   <main id="main">
     <section class="wrap hero" id="top" aria-labelledby="hero-title">
-      <div>
+      <div class="rv in">
         <h1 id="hero-title">Rust rules you can <span>check.</span></h1>
         <p class="hero-copy">Rustacean is a coordinated suite of five agent skills for secure, reliable, production-minded Rust engineering. Explicit rules, repeatable procedures, and checks you can verify.</p>
         <div class="hero-actions">
           <a class="button button-primary" href="#install">Install Rustacean <span aria-hidden="true">→</span></a>
-          <a class="button" href="https://github.com/jelome265/Rustacean">Read the source</a>
+          <a class="button button-quiet" href="https://github.com/jelome265/Rustacean">Read the source</a>
         </div>
       </div>
 
-      <div class="manifest" role="region" aria-labelledby="manifest-title">
+      <div class="manifest rv" style="--d:120ms" role="region" aria-labelledby="manifest-title">
         <div class="manifest-title"><span id="manifest-title">The five skills</span><small>BP-* rule IDs</small></div>
         <ol>
-          <li><span class="id">RS-01</span><div><strong>Best practices</strong><span>The rulebook. Baseline for the other four.</span></div></li>
-          <li><span class="id">RS-02</span><div><strong>Implementation</strong><span>Requirements-first build procedure. Cites BP-* rules.</span></div></li>
-          <li><span class="id">RS-03</span><div><strong>Hardening</strong><span>Security, resilience, observability and operations controls.</span></div></li>
-          <li><span class="id">RS-04</span><div><strong>Read-only audit</strong><span>Findings with severity, location and reproduction. Never edits code.</span></div></li>
-          <li><span class="id">RS-05</span><div><strong>Framework controls</strong><span>Approved stack, banned alternatives, executable inventory checks.</span></div></li>
+          <li class="rv" style="--d:180ms"><span class="id">RS-01</span><div><strong>Best practices</strong><span class="desc">The rulebook. Baseline for the other four.</span></div></li>
+          <li class="rv" style="--d:240ms"><span class="id">RS-02</span><div><strong>Implementation</strong><span class="desc">Requirements-first build procedure. Cites BP-* rules.</span></div></li>
+          <li class="rv" style="--d:300ms"><span class="id">RS-03</span><div><strong>Hardening</strong><span class="desc">Security, resilience, observability and operations controls.</span></div></li>
+          <li class="rv" style="--d:360ms"><span class="id">RS-04</span><div><strong>Read-only audit</strong><span class="desc">Findings with severity, location and reproduction. Never edits code.</span></div></li>
+          <li class="rv" style="--d:420ms"><span class="id">RS-05</span><div><strong>Framework controls</strong><span class="desc">Approved stack, banned alternatives, executable inventory checks.</span></div></li>
         </ol>
         <p class="manifest-foot">5 skills · 12 agent targets · Apache-2.0</p>
       </div>
@@ -263,35 +286,54 @@
 
     <section class="section install" id="install" aria-labelledby="install-title">
       <div class="wrap">
-        <h2 class="section-title" id="install-title">Preview first. Then apply.</h2>
-        <p class="section-lede">The default is a dry run that writes nothing. Installation is a separate, explicit step, and the installer verifies what it wrote.</p>
+        <h2 class="section-title rv" id="install-title">Preview first. Then apply.</h2>
+        <p class="section-lede rv">The default is a dry run that writes nothing. Installation is a separate, explicit step, and the installer verifies what it wrote.</p>
 
         <div class="install-grid">
           <ol class="steps">
-            <li><span class="n" aria-hidden="true">1</span><div><strong>Install the package</strong><p>Node.js 18+ and Python 3. The package bundles the installer and all five skills. No frontend build step.</p></div></li>
-            <li><span class="n" aria-hidden="true">2</span><div><strong>Preview the plan</strong><p>A dry run prints what would change. Nothing is written.</p></div></li>
-            <li><span class="n" aria-hidden="true">3</span><div><strong>Apply and verify</strong><p>Writes the files, then checks content hashes and peer links.</p></div></li>
-            <li><span class="n" aria-hidden="true">4</span><div><strong>Confirm the agent loads them</strong><p>Installed is not discovered. See <a href="#verify">the discovery checks</a>.</p></div></li>
+            <li class="rv"><div><strong>Install the package</strong><p>Node.js 18+ and Python 3. The package bundles the installer and all five skills. No frontend build step.</p></div></li>
+            <li class="rv" style="--d:80ms"><div><strong>Preview the plan</strong><p>A dry run prints what would change. Nothing is written.</p></div></li>
+            <li class="rv" style="--d:160ms"><div><strong>Apply and verify</strong><p>Writes the files, then checks content hashes and peer links.</p></div></li>
+            <li class="rv" style="--d:240ms"><div><strong>Confirm the agent loads them</strong><p>Installed is not discovered. See <a href="#verify">the discovery checks</a>.</p></div></li>
           </ol>
 
-          <div>
+          <div class="rv" style="--d:120ms">
+            <div class="picker">
+              <label for="agent">Your agent</label>
+              <select id="agent">
+                <option value="codex">OpenAI Codex CLI (codex)</option>
+                <option value="claude-code">Claude Code (claude-code)</option>
+                <option value="opencode">OpenCode (opencode)</option>
+                <option value="gemini-cli">Gemini CLI (gemini-cli)</option>
+                <option value="zed">Zed Agent (zed)</option>
+                <option value="antigravity">Google Antigravity (antigravity)</option>
+                <option value="cursor">Cursor (cursor)</option>
+                <option value="copilot">GitHub Copilot, VS Code (copilot)</option>
+                <option value="zcode">Z.AI ZCode (zcode)</option>
+                <option value="freebuff">Freebuff, Codebuff (freebuff)</option>
+                <option value="muse">Meta Muse Code (muse)</option>
+                <option value="kimi">Kimi Code CLI (kimi)</option>
+              </select>
+              <p class="hint">The commands below update for the agent you choose.</p>
+            </div>
+
             <div class="console" aria-labelledby="console-npm">
-              <div class="console-head"><span id="console-npm">project root</span><span>npm</span></div>
+              <div class="console-head"><span id="console-npm">Project root, npm</span><span>Dry run first</span></div>
               <div class="cmd"><code>npm i rustacean-skills</code><button class="copy" type="button" data-copy="npm i rustacean-skills">Copy</button></div>
               <div class="cmd"><code>npx rustacean-skills --list</code><button class="copy" type="button" data-copy="npx rustacean-skills --list">Copy</button></div>
-              <div class="cmd"><code>npx rustacean-skills --agent codex --project-root .</code><button class="copy" type="button" data-copy="npx rustacean-skills --agent codex --project-root .">Copy</button><p class="cmd-note">Dry run. Prints the plan and writes nothing.</p></div>
-              <div class="cmd"><code>npx rustacean-skills --agent codex --project-root . --apply</code><button class="copy" type="button" data-copy="npx rustacean-skills --agent codex --project-root . --apply">Copy</button><p class="cmd-note">Writes the files, then verifies hashes and peer links.</p></div>
-              <div class="console-foot"><span>Replace <code>codex</code> with your agent ID.</span><span class="status" role="status" aria-live="polite" id="copy-status"></span></div>
+              <div class="cmd"><code data-agent-cmd="dry">npx rustacean-skills --agent codex --project-root .</code><button class="copy" type="button" data-agent-copy="dry">Copy</button><p class="cmd-note">Dry run. Prints the plan and writes nothing.</p></div>
+              <div class="cmd"><code data-agent-cmd="apply">npx rustacean-skills --agent codex --project-root . --apply</code><button class="copy" type="button" data-agent-copy="apply">Copy</button><p class="cmd-note">Writes the files, then verifies hashes and peer links.</p></div>
+              <div class="console-foot"><span>Commands use the agent you selected above.</span><span class="status" role="status" aria-live="polite" id="copy-status"></span></div>
             </div>
 
             <p class="plugin-label">Or as a Claude Code plugin</p>
             <div class="console" aria-labelledby="console-plugin">
-              <div class="console-head"><span id="console-plugin">claude code</span><span>plugin</span></div>
+              <div class="console-head"><span id="console-plugin">Claude Code</span><span>Plugin</span></div>
               <div class="cmd"><code>claude plugin marketplace add jelome265/Rustacean</code><button class="copy" type="button" data-copy="claude plugin marketplace add jelome265/Rustacean">Copy</button></div>
               <div class="cmd"><code>claude plugin install rustacean@rustacean</code><button class="copy" type="button" data-copy="claude plugin install rustacean@rustacean">Copy</button></div>
               <div class="console-foot"><span>Requires a Claude Code version with <code>claude plugin</code> commands.</span></div>
             </div>
-            <p class="plugin-note">Installation guide: <a href="https://github.com/jelome265/Rustacean/blob/main/skills/INSTALLATION.md">skills/INSTALLATION.md</a></p>
+            <p class="plugin-note">Full guide: <a href="https://github.com/jelome265/Rustacean/blob/main/skills/INSTALLATION.md">skills/INSTALLATION.md</a></p>
           </div>
         </div>
       </div>
@@ -299,35 +341,35 @@
 
     <section class="section" id="skills" aria-labelledby="skills-title">
       <div class="wrap">
-        <h2 class="section-title" id="skills-title">Five skills, one standard.</h2>
-        <p class="section-lede">The five skills refer to one another, and the installer refuses to install a partial suite.</p>
+        <h2 class="section-title rv" id="skills-title">Five skills, one standard.</h2>
+        <p class="section-lede rv">The five skills refer to one another, and the installer refuses to install a partial suite.</p>
 
         <ul class="skill-list">
-          <li class="skill-row">
+          <li class="skill-row rv">
             <span class="skill-id">RS-01</span>
             <div><h3 class="skill-name">Best practices</h3><span class="skill-role">Rulebook</span></div>
             <p class="skill-desc">Stable BP-* rule IDs, workspace lint policy, and explicit controls against risky Rust patterns.</p>
             <dl class="skill-desc-wrap skill-desc"><dt>Use for</dt><dd>Any Rust code written, reviewed, refactored or configured.</dd><dt>Role</dt><dd>The baseline the other four depend on.</dd></dl>
           </li>
-          <li class="skill-row">
+          <li class="skill-row rv">
             <span class="skill-id">RS-02</span>
             <div><h3 class="skill-name">Implementation</h3><span class="skill-role">Build</span></div>
             <p class="skill-desc">A requirements-first procedure for turning an agreed design into maintainable Rust code.</p>
             <dl class="skill-desc-wrap skill-desc"><dt>Use for</dt><dd>Creating or extending crates, services, CLIs and libraries.</dd><dt>Role</dt><dd>Every rule it applies cites a BP-* rule.</dd></dl>
           </li>
-          <li class="skill-row">
+          <li class="skill-row rv">
             <span class="skill-id">RS-03</span>
             <div><h3 class="skill-name">Hardening</h3><span class="skill-role">Harden</span></div>
             <p class="skill-desc">Security, resilience, observability, operational readiness, build discipline and container controls.</p>
             <dl class="skill-desc-wrap skill-desc"><dt>Use for</dt><dd>Services that handle untrusted input, money, personal data or credentials.</dd><dt>Role</dt><dd>Builds on the rulebook baseline.</dd></dl>
           </li>
-          <li class="skill-row">
+          <li class="skill-row rv">
             <span class="skill-id">RS-04</span>
             <div><h3 class="skill-name">Read-only audit</h3><span class="skill-role">Inspect</span></div>
             <p class="skill-desc">Evidence-based security and logic findings, each with severity, location at a pinned commit, reproduction and remediation.</p>
             <dl class="skill-desc-wrap skill-desc"><dt>Use for</dt><dd>Security reviews, pre-launch reviews, and second opinions on Rust services.</dd><dt>Role</dt><dd>Never modifies code and never merges anything.</dd></dl>
           </li>
-          <li class="skill-row">
+          <li class="skill-row rv">
             <span class="skill-id">RS-05</span>
             <div><h3 class="skill-name">Framework controls</h3><span class="skill-role">Control</span></div>
             <p class="skill-desc">An approved framework stack, prohibited patterns, and executable inventory checks that keep dependencies aligned with policy.</p>
@@ -339,11 +381,11 @@
 
     <section class="section method" id="method" aria-labelledby="method-title">
       <div class="wrap">
-        <h2 class="section-title" id="method-title">Written guidance. Checked where possible.</h2>
-        <p class="section-lede">Skills guide agent behaviour. They do not replace compilers, tests, CI or human review. This is what each part does.</p>
+        <h2 class="section-title rv" id="method-title">Guidance, then checks.</h2>
+        <p class="section-lede rv">Skills guide agent behaviour. They do not replace compilers, tests, CI or human review. This is what each part does.</p>
 
         <div class="method-grid">
-          <div class="method-col">
+          <div class="method-col rv">
             <h3>Written for the agent</h3>
             <ul>
               <li>Rules with stable IDs that plans, reviews and audit findings can cite.</li>
@@ -351,7 +393,7 @@
               <li>An approved stack and banned alternatives, described in plain language.</li>
             </ul>
           </div>
-          <div class="method-col checked">
+          <div class="method-col checked rv" style="--d:120ms">
             <h3>Checked by tools</h3>
             <ul>
               <li>Clippy disallowed-method and disallowed-type lists.</li>
@@ -360,16 +402,16 @@
             </ul>
           </div>
         </div>
-        <p class="method-note">Where a rule has no check, it is guidance. The audit skill reports findings with evidence, but a finding is a claim to verify, not a verdict.</p>
+        <p class="method-note rv">Where a rule has no check, it is guidance. The audit skill reports findings with evidence, but a finding is a claim to verify, not a verdict.</p>
       </div>
     </section>
 
     <section class="section" id="platforms" aria-labelledby="platforms-title">
       <div class="wrap">
-        <h2 class="section-title" id="platforms-title">Twelve agents. Graded honestly.</h2>
-        <p class="section-lede">The installer documents discovery paths for twelve coding agents. Evidence varies by target, so the table separates vendor documentation from conflicting and third-party references.</p>
+        <h2 class="section-title rv" id="platforms-title">Twelve agents, graded.</h2>
+        <p class="section-lede rv">The installer documents discovery paths for twelve coding agents. Evidence varies by target, so the table separates vendor documentation from conflicting and third-party references.</p>
 
-        <div class="table-wrap" role="region" tabindex="0" aria-labelledby="agents-caption">
+        <div class="table-wrap rv" role="region" tabindex="0" aria-labelledby="agents-caption">
           <table>
             <caption id="agents-caption">Discovery paths and evidence grade by <code>--agent</code> ID</caption>
             <thead>
@@ -382,30 +424,30 @@
               </tr>
             </thead>
             <tbody>
-              <tr><th scope="row">Claude Code</th><td><code>claude-code</code></td><td><code>.claude/skills/</code></td><td><code>~/.claude/skills/</code></td><td><span class="grade grade-official">Official</span></td></tr>
-              <tr><th scope="row">OpenAI Codex CLI</th><td><code>codex</code></td><td><code>.agents/skills/</code></td><td><code>~/.agents/skills/</code></td><td><span class="grade grade-official">Official</span> sources disagree on user path</td></tr>
-              <tr><th scope="row">OpenCode</th><td><code>opencode</code></td><td><code>.agents/skills/</code></td><td><code>~/.agents/skills/</code></td><td><span class="grade grade-official">Official</span></td></tr>
-              <tr><th scope="row">Gemini CLI</th><td><code>gemini-cli</code></td><td><code>.agents/skills/</code></td><td><code>~/.agents/skills/</code></td><td><span class="grade grade-official">Official</span></td></tr>
-              <tr><th scope="row">Zed Agent</th><td><code>zed</code></td><td><code>.agents/skills/</code></td><td><code>~/.agents/skills/</code></td><td><span class="grade grade-official">Official</span></td></tr>
-              <tr><th scope="row">Google Antigravity</th><td><code>antigravity</code></td><td><code>.agents/skills/</code></td><td><code>~/.gemini/config/skills/</code></td><td><span class="grade grade-official">Official</span> CLI differs</td></tr>
-              <tr><th scope="row">Cursor</th><td><code>cursor</code></td><td><code>.agents/skills/</code></td><td><code>~/.agents/skills/</code></td><td><span class="grade grade-official">Official</span></td></tr>
-              <tr><th scope="row">GitHub Copilot (VS Code)</th><td><code>copilot</code></td><td><code>.agents/skills/</code></td><td><code>~/.agents/skills/</code></td><td><span class="grade grade-official">Official</span></td></tr>
-              <tr><th scope="row">Z.AI ZCode</th><td><code>zcode</code></td><td><code>.zcode/skills/</code></td><td><code>~/.zcode/skills/</code></td><td><span class="grade grade-conflict">Conflicting</span> needs <code>--accept-conflicting</code></td></tr>
-              <tr><th scope="row">Freebuff (Codebuff)</th><td><code>freebuff</code></td><td><code>.agents/skills/</code></td><td><code>~/.agents/skills/</code></td><td><span class="grade grade-third">Third-party</span> not runtime-verified</td></tr>
-              <tr><th scope="row">Meta Muse Code</th><td><code>muse</code></td><td><code>.agents/skills/</code></td><td><code>~/.agents/skills/</code></td><td><span class="grade grade-third">Third-party</span> not runtime-verified</td></tr>
-              <tr><th scope="row">Kimi Code CLI</th><td><code>kimi</code></td><td><code>.agents/skills/</code></td><td><code>~/.agents/skills/</code></td><td><span class="grade grade-conflict">Conflicting</span> needs <code>--accept-conflicting</code></td></tr>
+              <tr><th scope="row">Claude Code</th><td data-label="--agent"><code>claude-code</code></td><td data-label="Project path"><code>.claude/skills/</code></td><td data-label="User path"><code>~/.claude/skills/</code></td><td data-label="Evidence"><span class="grade grade-official">Official</span></td></tr>
+              <tr><th scope="row">OpenAI Codex CLI</th><td data-label="--agent"><code>codex</code></td><td data-label="Project path"><code>.agents/skills/</code></td><td data-label="User path"><code>~/.agents/skills/</code></td><td data-label="Evidence"><span class="grade grade-official">Official</span> sources disagree on user path</td></tr>
+              <tr><th scope="row">OpenCode</th><td data-label="--agent"><code>opencode</code></td><td data-label="Project path"><code>.agents/skills/</code></td><td data-label="User path"><code>~/.agents/skills/</code></td><td data-label="Evidence"><span class="grade grade-official">Official</span></td></tr>
+              <tr><th scope="row">Gemini CLI</th><td data-label="--agent"><code>gemini-cli</code></td><td data-label="Project path"><code>.agents/skills/</code></td><td data-label="User path"><code>~/.agents/skills/</code></td><td data-label="Evidence"><span class="grade grade-official">Official</span></td></tr>
+              <tr><th scope="row">Zed Agent</th><td data-label="--agent"><code>zed</code></td><td data-label="Project path"><code>.agents/skills/</code></td><td data-label="User path"><code>~/.agents/skills/</code></td><td data-label="Evidence"><span class="grade grade-official">Official</span></td></tr>
+              <tr><th scope="row">Google Antigravity</th><td data-label="--agent"><code>antigravity</code></td><td data-label="Project path"><code>.agents/skills/</code></td><td data-label="User path"><code>~/.gemini/config/skills/</code></td><td data-label="Evidence"><span class="grade grade-official">Official</span> CLI differs</td></tr>
+              <tr><th scope="row">Cursor</th><td data-label="--agent"><code>cursor</code></td><td data-label="Project path"><code>.agents/skills/</code></td><td data-label="User path"><code>~/.agents/skills/</code></td><td data-label="Evidence"><span class="grade grade-official">Official</span></td></tr>
+              <tr><th scope="row">GitHub Copilot (VS Code)</th><td data-label="--agent"><code>copilot</code></td><td data-label="Project path"><code>.agents/skills/</code></td><td data-label="User path"><code>~/.agents/skills/</code></td><td data-label="Evidence"><span class="grade grade-official">Official</span></td></tr>
+              <tr><th scope="row">Z.AI ZCode</th><td data-label="--agent"><code>zcode</code></td><td data-label="Project path"><code>.zcode/skills/</code></td><td data-label="User path"><code>~/.zcode/skills/</code></td><td data-label="Evidence"><span class="grade grade-conflict">Conflicting</span> needs <code>--accept-conflicting</code></td></tr>
+              <tr><th scope="row">Freebuff (Codebuff)</th><td data-label="--agent"><code>freebuff</code></td><td data-label="Project path"><code>.agents/skills/</code></td><td data-label="User path"><code>~/.agents/skills/</code></td><td data-label="Evidence"><span class="grade grade-third">Third-party</span> not runtime-verified</td></tr>
+              <tr><th scope="row">Meta Muse Code</th><td data-label="--agent"><code>muse</code></td><td data-label="Project path"><code>.agents/skills/</code></td><td data-label="User path"><code>~/.agents/skills/</code></td><td data-label="Evidence"><span class="grade grade-third">Third-party</span> not runtime-verified</td></tr>
+              <tr><th scope="row">Kimi Code CLI</th><td data-label="--agent"><code>kimi</code></td><td data-label="Project path"><code>.agents/skills/</code></td><td data-label="User path"><code>~/.agents/skills/</code></td><td data-label="Evidence"><span class="grade grade-conflict">Conflicting</span> needs <code>--accept-conflicting</code></td></tr>
             </tbody>
           </table>
         </div>
-        <p class="table-foot">Evidence grades describe vendor documentation, not whether an agent loads the skills. <a href="https://github.com/jelome265/Rustacean#install-on-each-platform">Full commands for each target</a>.</p>
+        <p class="table-foot rv">Evidence grades describe vendor documentation, not whether an agent loads the skills. <a href="https://github.com/jelome265/Rustacean#install-on-each-platform">Full commands for each target</a>.</p>
 
         <div class="verify" id="verify">
-          <h2>Installed is not discovered.</h2>
-          <div>
+          <h2 class="rv">Installed is not discovered.</h2>
+          <div class="verify-body rv" style="--d:120ms">
             <ol class="verify-steps">
-              <li><span class="n" aria-hidden="true">1</span><div><strong>Start a new session.</strong> Or restart the agent.</div></li>
-              <li><span class="n" aria-hidden="true">2</span><div><strong>List the skills</strong> in the agent. Confirm all five appear.</div></li>
-              <li><span class="n" aria-hidden="true">3</span><div><strong>Check each agent separately</strong> if you use more than one.</div></li>
+              <li><div><strong>Start a new session.</strong> Or restart the agent.</div></li>
+              <li><div><strong>List the skills</strong> in the agent. Confirm all five appear.</div></li>
+              <li><div><strong>Check each agent separately</strong> if you use more than one.</div></li>
             </ol>
             <div class="caveat"><strong>A successful installer run</strong> confirms the files are present and verified. It does not prove the target agent loaded or followed them.</div>
             <a class="text-link" href="https://github.com/jelome265/Rustacean/blob/main/skills/INSTALLATION.md#verify-discovery">Follow the discovery checks →</a>
@@ -435,22 +477,59 @@
   <script>
     (function () {
       var status = document.getElementById("copy-status");
+
+      // Live element: the commands follow the selected agent.
+      var select = document.getElementById("agent");
+      var dry = document.querySelector('[data-agent-cmd="dry"]');
+      var apply = document.querySelector('[data-agent-cmd="apply"]');
+      function commands() {
+        var a = select ? select.value : "codex";
+        return {
+          dry: "npx rustacean-skills --agent " + a + " --project-root .",
+          apply: "npx rustacean-skills --agent " + a + " --project-root . --apply"
+        };
+      }
+      function render() {
+        if (!dry || !apply) return;
+        var c = commands();
+        dry.textContent = c.dry;
+        apply.textContent = c.apply;
+        document.querySelector('[data-agent-copy="dry"]').setAttribute("data-copy", c.dry);
+        document.querySelector('[data-agent-copy="apply"]').setAttribute("data-copy", c.apply);
+      }
+      if (select) select.addEventListener("change", render);
+      render();
+
+      // Copy buttons, feature-detected; hidden where the clipboard is unavailable.
       var buttons = document.querySelectorAll(".copy");
       if (!navigator.clipboard || !window.isSecureContext) {
         buttons.forEach(function (b) { b.hidden = true; });
-        return;
-      }
-      buttons.forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          navigator.clipboard.writeText(btn.getAttribute("data-copy")).then(function () {
-            btn.textContent = "Copied";
-            if (status) status.textContent = "Command copied.";
-            setTimeout(function () { btn.textContent = "Copy"; }, 1600);
-          }, function () {
-            if (status) status.textContent = "Copy failed. Select the command manually.";
+      } else {
+        buttons.forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            navigator.clipboard.writeText(btn.getAttribute("data-copy")).then(function () {
+              btn.textContent = "Copied";
+              if (status) status.textContent = "Command copied.";
+              setTimeout(function () { btn.textContent = "Copy"; }, 1600);
+            }, function () {
+              if (status) status.textContent = "Copy failed. Select the command manually.";
+            });
           });
         });
-      });
+      }
+
+      // Entrance reveals: elements rise once as they enter the viewport.
+      var items = document.querySelectorAll(".rv:not(.in)");
+      if ("IntersectionObserver" in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+          });
+        }, { rootMargin: "0px 0px -8% 0px", threshold: 0.12 });
+        items.forEach(function (el) { io.observe(el); });
+      } else {
+        items.forEach(function (el) { el.classList.add("in"); });
+      }
     })();
   </script>
 </body>
