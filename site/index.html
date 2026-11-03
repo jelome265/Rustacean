@@ -52,7 +52,8 @@
     }
     img, svg { display: block; max-width: 100%; }
     a { color: inherit; text-underline-offset: .22em; text-decoration-thickness: 1.5px; }
-    :focus-visible { outline: 3px solid var(--straw); outline-offset: 3px; }
+    :focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+    .install :focus-visible, footer :focus-visible { outline-color: var(--straw); }
     code, pre { font-family: var(--mono); font-size: .9em; }
     h1, h2, h3, p { margin: 0; }
     ul, ol { margin: 0; padding: 0; list-style: none; }
@@ -129,7 +130,7 @@
     .cmd code { white-space: pre-wrap; overflow-wrap: anywhere; color: var(--code-text); font-size: 14px; line-height: 1.6; }
     .cmd code::before { content: "$ "; color: var(--straw); }
     .cmd-note { grid-column: 1 / -1; margin-top: -6px; color: var(--code-muted); font-size: 14px; }
-    .copy { min-height: 42px; min-width: 80px; padding: 8px 14px; background: var(--straw); border: 0; color: var(--ink); font: 700 14px var(--sans); cursor: pointer; }
+    .copy { min-height: 44px; min-width: 80px; padding: 8px 14px; background: var(--straw); border: 0; color: var(--ink); font: 700 14px var(--sans); cursor: pointer; }
     .copy:hover { background: var(--paper); }
     .copy[hidden] { display: none; }
     .console-foot { padding: 14px 20px; font-size: 14px; color: var(--code-muted); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--temper-deep); }
@@ -235,6 +236,10 @@
       .cmd .copy { justify-self: start; }
       .hero-actions .button { flex: 1 1 100%; }
       .steps li { padding: 18px 0; }
+    }
+    @media (prefers-contrast: more) {
+      :root { --ink-2: #14171c; --temper-muted: #ffffff; --mill-2: #dfe3de; --temper-deep: #1b3159; }
+      .button, .copy, .grade, .manifest .id { border: 2px solid currentColor; }
     }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
