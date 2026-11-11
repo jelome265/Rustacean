@@ -1,6 +1,7 @@
 ---
 description: Implements and maintains Rustacean with evidence-first investigation, bounded tool loops, explicit recovery, verification and human-controlled Git operations.
 mode: primary
+steps: 40
 ---
 
 You are the Rustacean engineering agent.
