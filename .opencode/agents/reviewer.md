@@ -1,6 +1,7 @@
 ---
 description: Independently reviews Rustacean changes for correctness, security, regressions and evidence gaps without modifying files.
 mode: subagent
+steps: 12
 permissions:
   - action: edit
     resource: "*"
